@@ -1,12 +1,15 @@
 #!/usr/bin/env perl
 use MIME::Base64 qw(encode_base64);
+use Getopt::Std;
+use File::Fetch;
 
-$sstr = $ARGV[0];
+
+#$sstr = $ARGV[0];
 $url = 'http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=';
 $iurl= 'http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=';
 $iurl2= '&type=card';
-$surl= 'http://gatherer.wizards.com/Pages/Search/Default.aspx?name=';
-$max=10;
+$surl= 'http://gatherer.wizards.com/Pages/Search/Default.aspx?';
+
 
 sub kolory {
  my $tekst = $_[0];
@@ -44,114 +47,128 @@ HEAD
 }
 
 sub entry {
- my $numer = $_[0];
- my $mana;
-system ("wget $url$numer -O tmp$numer.tmp");
-open my $datafile, "tmp$numer.tmp";
-while (<$datafile>) {
-    if (/Card Name:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	($name) =  ($linia =~ /\s*(.*)<\/div>/ );
-    }
-    elsif (/Mana Cost:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	@spl = split(/\/>/,$linia);
-	while ($ss = shift @spl) {
-	    if ($ss =~ /alt=\"(.+?)\"/){
-		$mana .= $1;
+    my $numer = $_[0];
+    my $mana;
+    my $name;
+    my $types;
+    my $ctext;
+    my $ftext;
+    my $p; my $t;
+    my $exp;
+    my $rare;
+    my $cnum;
+    my $art;
+
+    my $ff = File::Fetch->new(uri => "$url$numer");
+    my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
+
+
+    open my $datafile, $where;
+    while (<$datafile>) {
+        if (/Card Name:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    ($name) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $name =~ s/&/&amp;/;
+	}
+	elsif (/Mana Cost:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    @spl = split(/\/>/,$linia);
+	    while ($ss = shift @spl) {
+		if ($ss =~ /alt=\"(.+?)\"/){
+		    $mana .= $1;
+		}
 	    }
+	    $mana=kolory($mana);
 	}
-	$mana=kolory($mana);
-    }
-    elsif (/Types:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	($types) =  ($linia =~ /\s*(.*)<\/div>/ );
-    }
-    elsif (/Card Text:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	($ctext) =  ($linia =~ /\s*(.*)<\/div>/ );
-	$ctext =~ s/<\/div>/\n/;
-	$ctext =~ s/<img.*?alt="(.*?)".*?\/>/kolory($1)/eg;
-	$ctext =~ s|<.+?>||g;
-    }
-    elsif (/Flavor Text:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	($ftext) =  ($linia =~ /\s*(.*)<\/div>/ );
-	$ftext =~ s/<\/div>/\n/;
-	$ftext =~ s|<.+?>||g;
-    }
-    elsif (/<b>P\/T:<\/b><\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	if ($linia =~ /\s*(.*)\s\/\s(.*)<\/div>/ ) {
-	    $p=$1;
-	    $t=$2;
+	elsif (/Types:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    ($types) =  ($linia =~ /\s*(.*)<\/div>/ );
+	}
+	elsif (/Card Text:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    ($ctext) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $ctext =~ s/<\/div>/\n\n/g;
+	    $ctext =~ s/<img.*?alt="(.*?)".*?\/>/kolory($1)/eg;
+	    $ctext =~ s|<.+?>||g;
+	    $ctext =~ s/&/&amp;/;
+	}
+	elsif (/Flavor Text:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    ($ftext) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $ftext =~ s/<\/div>/\n\n/;
+	    $ftext =~ s|<.+?>||g;
+	    $ftext =~ s/&/&amp;/;
+        }
+	elsif (/<b>P\/T:<\/b><\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    if ($linia =~ /\s*(.*)\s\/\s(.*)<\/div>/ ) {
+		$p=$1;
+		$t=$2;
+	    }
+        }
+	elsif (/Expansion:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    ($exp) =  ($linia =~ /.*\">(.*)<\/a>/ );
+	}
+	elsif (/Rarity:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    ($rare) =  ($linia =~ /\'>(.*)<\/span><\/div>/ );
+	}
+	elsif (/Card Number:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    ($cnum) =  ($linia =~ /\s*(.*)<\/div>/ );
+	}
+	elsif (/Artist:<\/div>/) {
+	    $linia=<$datafile>;
+	    $linia=<$datafile>;
+	    ($art) =  ($linia =~ /\">(.*)<\/a><\/div>/ );
+	    $art =~ s/&/&amp;/;
 	}
     }
-    elsif (/Expansion:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	($exp) =  ($linia =~ /.*\">(.*)<\/a>/ );
-    }
-    elsif (/Rarity:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	($rare) =  ($linia =~ /\'>(.*)<\/span><\/div>/ );
-#	$rare =~ s/Mythic Rare/M/;
-#	$rare =~ s/Rare/R/;
-#	$rare =~ s/Uncommon/U/;
-#	$rare =~ s/Common/C/;
-#	$rare =~ s/Special/S/;
-    }
-    elsif (/Card Number:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	($cnum) =  ($linia =~ /\s*(.*)<\/div>/ );
-    }
-    elsif (/Artist:<\/div>/) {
-	$linia=<$datafile>;
-	$linia=<$datafile>;
-	($art) =  ($linia =~ /\">(.*)<\/a><\/div>/ );
-    }
 
-}
+    close $datafile;
 
-close $datafile;
-
-my $j=0;
-  if ($mana =~ /R/ ) {
-     $color="Red";
-     $j++;
-    }
-  if ($mana =~ /B/ ) {
-     $color="Black";
-     $j++;
-  }
-  if ($mana =~ /U/ ) {
-     $color="Blue";
-     $j++;
-  }
-  if ($mana =~ /G/ ) {
-     $color="Green";
-     $j++;
-  }
-  if ($mana =~ /W/ ) {
-     $color="White";
-     $j++;
-  }
-  if ($j > 1 ) {
-     $color="Multi";
-  }
-  elsif ($j==0 ) {
-     $color="Colorless";
-  }
+    my $j=0;
+	if ($mana =~ /R/ ) {
+	    $color="Red";
+	    $j++;
+	}
+	if ($mana =~ /B/ ) {
+	    $color="Black";
+	    $j++;
+	}
+	if ($mana =~ /U/ ) {
+	    $color="Blue";
+	    $j++;
+	}
+	if ($mana =~ /G/ ) {
+	    $color="Green";
+	    $j++;
+	}
+	if ($mana =~ /W/ ) {
+	    $color="White";
+	    $j++;
+	}
+	if ($j > 1 ) {
+	    $color="Multi";
+	}
+	elsif ($types =~ /[lL]and/ ) {
+	    $color="Land";
+	}
+	elsif ($j == 0) {
+	    $color="Colorless";
+	}
 
 print <<ENTRY;
 <entry id="$i">
@@ -175,53 +192,82 @@ $i++;
 } #sub entry
 
 sub image {
- my $numer = $_[0];
+    my $numer = $_[0];
 
-system ("wget \'".$iurl.$numer.$iurl2."\' -O tmp$numer.jpg");
-print '<image format="JPEG" id="'.$numer.'.jpeg">';
-open $pic,"tmp$numer.jpg" or die "$!";
-while (read($pic, $buf, 60*57)) {
-print encode_base64($buf);
-}
-close $pic;
-print '</image>';
+    my $ff = File::Fetch->new(uri => $iurl.$numer.$iurl2);
+    my $where = $ff->fetch( to => '/tmp' ) or die $ff->error;;
+
+    #system ("wget \'".$iurl.$numer.$iurl2."\' -O tmp$numer.jpg");
+
+    open my $pic, $where;
+#    open $pic,"tmp$numer.jpg" or die "$!";
+    print '<image format="JPEG" id="'.$numer.'.jpeg">';
+    while (read($pic, $buf, 60*57)) {
+	print encode_base64($buf);
+    }
+    close $pic;
+    print '</image>';
 }
 
 sub search {
-system ("wget \'".$surl."$sstr\' -O tmp.sr");
-open $wyniki,"tmp.sr";
-while (<$wyniki>) {
-push @lista ,  /multiverseid=(\d+)[\'\"]/g;
-}
-close $wyniki;
+    my $ff = File::Fetch->new(uri => $surl.$sstr);
+    my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
+    #system ("wget \'".$surl."$sstr\' -O tmp.sr");
+
+    open my $wyniki, $where;
+
+    while (<$wyniki>) {
+	push @lista ,  /multiverseid=(\d+)[\'\"]/g;
+    }
+    close $wyniki;
 }
 
+getopt('naN', \%opts);
+
+if (!%opts) { die "-n - search by name, -N - search by multiverseid, -a - search by artist.\n";}
 
 header;
 
-$sstr =~ s/\s+/]+[/g;
-$sstr = "+[".$sstr."]";
 
-@lista;
-search;
-
-my %hash   = map { $_, 1 } @lista;
-my @lista = keys %hash;
-
-@l_tmp1=@lista[0..9];
-@l_tmp2=@l_tmp1;
-
-
-#print join " " , @lista;
-$i=0;
-while ($n = shift @l_tmp1)
-{
-entry $n;
+if ($opts{'N'}) {
+    if ($opts{'N'} =~ /\d+/ ) {
+    entry $opts{'N'};
+    print '<images>';
+    image $opts{'N'};
+    }
+    else { die "-N value is not a number\n."}
 }
-print '<images>';
-while ($n = shift @l_tmp2)
-{
-image $n;
+elsif ($opts{'n'} || $opts{'a'} ) {
+    if ($opts{'n'}) {
+	$sstr = $opts{'n'};
+	$sstr =~ s/\s+/]+[/g;
+	$sstr = "name=+[".$sstr."]";
+    }
+    else {
+	$sstr = $opts{'a'};
+	$sstr =~ s/\s+/]+[/g;
+	$sstr = "artist=+[".$sstr."]";
+    }
+
+    @lista;
+    search;
+
+    my %hash   = map { $_, 1 } @lista;
+    my @lista = keys %hash;
+
+    @l_tmp1=@lista[0..9];
+    @l_tmp2=@l_tmp1;
+
+    $i=0;
+    while ($n = shift @l_tmp1)
+    {
+	entry $n;
+    }
+    print '<images>';
+    while ($n = shift @l_tmp2)
+    {
+    image $n;
+    }
 }
 print '</images></collection></tellico>';
 
