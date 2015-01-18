@@ -19,6 +19,7 @@ sub kolory {
 	$tekst =~ s/Green/G/g;
 	$tekst =~ s/Black/B/g;
 	$tekst =~ s/White/W/g;
+	$tekst =~ s/Variable Colorless/X/g;
     $tekst;
 }
 
