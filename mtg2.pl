@@ -118,6 +118,7 @@ sub entry {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
 	    ($exp) =  ($linia =~ /.*\">(.*)<\/a>/ );
+	    $exp =~ s/Magic.*Conspiracy/Conspiracy/;
 	}
 	elsif (/Rarity:<\/div>/) {
 	    $linia=<$datafile>;
