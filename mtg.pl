@@ -190,6 +190,6 @@ header;
 
 entry $n;
 print '<images>';
-image $n;
+#image $n;
 print '</images></collection></tellico>';
 
