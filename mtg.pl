@@ -51,6 +51,7 @@ while (<$datafile>) {
 	$linia=<$datafile>;
 	$linia=<$datafile>;
 	($name) =  ($linia =~ /\s*(.*)<\/div>/ );
+	$name =~ s/&/&amp;/;
     }
     elsif (/Mana Cost:<\/div>/) {
 	$linia=<$datafile>;
@@ -72,16 +73,18 @@ while (<$datafile>) {
 	$linia=<$datafile>;
 	$linia=<$datafile>;
 	($ctext) =  ($linia =~ /\s*(.*)<\/div>/ );
-	$ctext =~ s/<\/div>/\n/;
+	$ctext =~ s/<\/div>/\n\n/g;
 	$ctext =~ s/<img.*?alt="(.*?)".*?\/>/kolory($1)/eg;
 	$ctext =~ s|<.+?>||g;
+	$ctext =~ s/&/&amp;/;
     }
     elsif (/Flavor Text:<\/div>/) {
 	$linia=<$datafile>;
 	$linia=<$datafile>;
 	($ftext) =  ($linia =~ /\s*(.*)<\/div>/ );
-	$ftext =~ s/<\/div>/\n/;
+	$ftext =~ s/<\/div>/\n\n/g;
 	$ftext =~ s|<.+?>||g;
+	$ftext =~ s/&/&amp;/;
     }
     elsif (/<b>P\/T:<\/b><\/div>/) {
 	$linia=<$datafile>;
@@ -97,16 +100,12 @@ while (<$datafile>) {
 	$linia=<$datafile>;
 	$linia=<$datafile>;
 	($exp) =  ($linia =~ /.*\">(.*)<\/a>/ );
+	$exp =~ s/Magic.*Conspiracy/Conspiracy/;
     }
     elsif (/Rarity:<\/div>/) {
 	$linia=<$datafile>;
 	$linia=<$datafile>;
 	($rare) =  ($linia =~ /\'>(.*)<\/span><\/div>/ );
-#	$rare =~ s/Mythic Rare/M/;
-#	$rare =~ s/Rare/R/;
-#	$rare =~ s/Uncommon/U/;
-#	$rare =~ s/Common/C/;
-#	$rare =~ s/Special/S/;
     }
     elsif (/Card Number:<\/div>/) {
 	$linia=<$datafile>;
@@ -117,6 +116,7 @@ while (<$datafile>) {
 	$linia=<$datafile>;
 	$linia=<$datafile>;
 	($art) =  ($linia =~ /\">(.*)<\/a><\/div>/ );
+	$art =~ s/&/&amp;/;
     }
 
 }
@@ -147,7 +147,10 @@ my $j=0;
   if ($j > 1 ) {
      $color="Multi";
   }
-  elsif ($j=0 ) {
+	elsif ($types =~ /[lL]and/ ) {
+	    $color="Land";
+	}
+	elsif ($j == 0) {
      $color="Colorless";
   }
 
@@ -158,7 +161,7 @@ print <<ENTRY;
 <mana-cost>$mana</mana-cost>
 <types>$types</types>
 <power>$p</power>
-<though>$t</though>
+<tough>$t</tough>
 <card-number>$cnum</card-number>
 <expansion>$exp</expansion>
 <rarity>$rare</rarity>

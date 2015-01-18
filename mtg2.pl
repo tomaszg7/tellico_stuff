@@ -100,7 +100,7 @@ sub entry {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
 	    ($ftext) =  ($linia =~ /\s*(.*)<\/div>/ );
-	    $ftext =~ s/<\/div>/\n\n/;
+	    $ftext =~ s/<\/div>/\n\n/g;
 	    $ftext =~ s|<.+?>||g;
 	    $ftext =~ s/&/&amp;/;
         }
