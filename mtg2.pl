@@ -259,7 +259,7 @@ sub search {
 
 getopt('naN', \%opts);
 
-if (!%opts) { die "-n - search by name, -N - search by multiverseid, -a - search by artist.\n";}
+if (!$opts{'n'} && !$opts{'a'} && !$opts{'n'}) { die "-n - search by name, -N - search by multiverseid, -a - search by artist.\n";}
 
 header;
 
