@@ -32,7 +32,8 @@ print <<HEAD;
     <field title="Name" flags="0" category="General" format="1" description="Title" type="1" name="title"/>
     <field title="Color" flags="2" category="General" format="4" description="New Field 4" type="3" allowed="Black;Blue;Red;Green;White;Multi;Colorless;Land" name="color"/>
     <field title="Mana Cost" flags="0" category="General" format="4" description="New Field 1" type="1" name="mana-cost"/>
-   <field title="Types" flags="0" category="General" format="4" description="New Field 1" type="1" name="types"/>
+   <field title="Types" flags="7" category="General" format="4" description="New Field 1" type="1" name="types"/>
+   <field title="Subtypes" flags="7" category="General" format="4" description="New Field 1" type="1" name="subtypes"/>
    <field title="Card Text" flags="0" category="Card Text" format="4" description="New Field 2" type="2" name="card-text"/>
    <field title="Power" flags="0" category="General" format="4" description="New Field 3" type="1" name="power"/>
    <field title="Tough" flags="0" category="General" format="4" description="New Field 4" type="1" name="tough"/>
@@ -59,6 +60,9 @@ sub entry {
     my $rare;
     my $cnum;
     my $art;
+
+    my $xmltypes;
+    my $xmlsubtypes;
 
     my $ff = File::Fetch->new(uri => "$url$numer");
     my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
@@ -171,19 +175,48 @@ sub entry {
 	elsif ($j == 0) {
 	    $color="Colorless";
 	}
+#####
+	if ($types =~ /(.*)\s*\x{e2}\x{80}\x{94}\s*(.*)/) {
+	    my $t = $1; my $st= $2;
+	    if ($t =~ /(Basic.*Land)/) {
+		$xmltypes="<types>$1<\/types>";
+	    } else {
+		$xmltypes="<types>".join("<\/types>\n<types>",split(" ", $t))."<\/types>"
+	    }
+	    if ($st =~ /(Urza.*(Power|Mine|Tower).*)/) {
+		$xmlsubtypes = "<subtypes>".$1."<\/subtypes>";
+	    } else {
+		$xmlsubtypes = "<subtypes>".join("<\/subtypes>\n<subtypes>",split(" ", $st))."<\/subtypes>";
+	    }
+	}
+	else {
+	    if ($types =~ /(World Enchantment|Enchant Creature)/) {
+		$xmltypes="<types>$1<\/types>";
+	    } else {
+		$xmltypes="<types>".join("<\/types>\n<types>",split(" ", $types))."<\/types>"
+	    }
+	}
+#####
 
 print <<ENTRY;
 <entry id="$i">
 <multiverseid>$numer</multiverseid>
 <title>$name</title>
 <mana-cost>$mana</mana-cost>
-<types>$types</types>
+<typess>
+$xmltypes
+</typess>
+<subtypess>
+$xmlsubtypes
+</subtypess>
 <power>$p</power>
 <tough>$t</tough>
 <card-number>$cnum</card-number>
 <expansion>$exp</expansion>
 <rarity>$rare</rarity>
+<illustrators>
 <illustrator>$art</illustrator>
+</illustrators>
 <flavor-text>$ftext</flavor-text>
 <card-text>$ctext</card-text>
 <color>$color</color>
