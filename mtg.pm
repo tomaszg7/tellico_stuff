@@ -267,7 +267,6 @@ sub search {
 
 sub __search_wyniki {
   $wyniki = $_[0];
-  %lst = $_[1];
 
   while (<$wyniki>) {
     if (/<span class=\"cardTitle\">/) {
@@ -281,11 +280,11 @@ sub __search_wyniki {
 		}
  	      }
 
- 	      $lst{ $id } = $nm." ".$r;
+ 	      $lista{ $id } = $nm." ".$r;
 	}
     }
   }
-  return %lst;
+  return 1;
 } # sub search_wyniki
 
 sub build_checklist {
@@ -310,7 +309,7 @@ sub build_checklist {
     }
 
     seek ($wyniki, 0, 0);
-    %lista = __search_wyniki $wyniki, %lista;
+     __search_wyniki $wyniki;
     close $wyniki;
 
     #calculate number of pages
@@ -322,7 +321,7 @@ sub build_checklist {
       my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
 
       open $wyniki, $where;
-      %lista = __search_wyniki $wyniki, %lista;
+      __search_wyniki $wyniki;
       close $wyniki;
 
     }

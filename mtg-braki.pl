@@ -26,8 +26,8 @@ if (!$opts{'n'}) { die "-n - search by expantion.\n";}
 #  %lista = {};
  %lista = mtg::build_checklist $opts{'n'};
 
-      $,="\n";
-      print sort(values %lista);
+#       $,="\n";
+#       print sort(values %lista);
 
 
 %karty = read_base;
