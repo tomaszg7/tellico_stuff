@@ -21,9 +21,9 @@ sub save_base {
 } # sub save_base
 
 
-getopt('cn', \%opts);
+getopts('c:n:', \%opts);
 
-if (!$opts{'n'}) { die "-n - search by expantion, -c - limit to color WUBRG.\n";}
+if (!$opts{'n'}) { die "-n - search by expansion, -c - limit to color WUBRG.\n";}
 
 my %lista = mtg::build_checklist($opts{'n'});
 

@@ -16,19 +16,29 @@ sub read_base {
       $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
       $lst{ $1 } = "1";
   }
+
+  my $baza = Archive::Zip->new();
+  unless ( $baza->read( '../mtg-liga2.tc' ) == AZ_OK ) {
+       die 'read error';
+  }
+  foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
+      $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
+      $lst{ $1 } = "1";
+  }
+  
   return %lst;
 } # sub read_base
 
-getopt('n', \%opts);
+getopts('n:q', \%opts);
 
-if (!$opts{'n'}) { die "-n - search by expantion.\n";}
+if (!$opts{'n'}) { die "-n - search by expansion, -q - print only summary.\n";}
 
-#  %lista = {};
- %lista = mtg::build_checklist $opts{'n'};
+%lista = mtg::build_checklist $opts{'n'};
 
 #       $,="\n";
 #       print sort(values %lista);
 
+if (keys( %lista) == 0) { die "Wrong expansion name.\n"; }
 
 %karty = read_base;
 
@@ -39,11 +49,15 @@ if (!$opts{'n'}) { die "-n - search by expantion.\n";}
 
 $j=0;
 
+@out;
+
 foreach $i (keys %lista) {
    unless (exists $karty{ $i }) {
-       print $lista{ $i }."\n";
+       push @out, $lista{ $i };
        $j++;
    }
 }
 
-print $j." cards missing.\n";
+unless ($opts{'q'}) { print "$_\n" for sort(@out); };
+
+print $j." cards missing, ".keys( %lista)." cards total, ".int((1-$j/keys(%lista))*100)."\% complete.\n";
