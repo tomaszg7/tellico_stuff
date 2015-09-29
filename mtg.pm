@@ -3,6 +3,7 @@ package mtg;
 use File::Fetch;
 use MIME::Base64 qw(encode_base64);
 use File::Copy;
+use Storable;
 
 sub __kolory {
  my $tekst = $_[0];
@@ -288,38 +289,45 @@ sub __search_wyniki {
 } # sub search_wyniki
 
 sub build_checklist {
-  $sstr = $_[0];
-  $sstr =~ s/\s+/+/g;
-  $sstr = "set=[\"".$sstr."\"]"; #output=checklist&
+  $set = $_[0];
+  $set =~ s/\s+/+/g;
+  $sstr = "set=[\"".$set."\"]"; #output=checklist&
 
-  my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Pages/Search/Default.aspx?'.$sstr);
-  my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
-
-  open $wyniki, $where;
-
-  my @strony; my $str_no;
-  my %lista;
-
-  while (<$wyniki>) {
-    $str_no = push @strony ,  /Default\.aspx\?page=(\d+)&/g;
+  if ( -f ".cache/$set" ) {
+    %lista = %{retrieve(".cache/$set")};
   }
-
-  seek ($wyniki, 0, 0);
-  %lista = __search_wyniki $wyniki, %lista;
-  close $wyniki;
-
-  #calculate number of pages
-  $str_no=($str_no-4)/2;
-
-  foreach $i (1..$str_no)
-  {
-    my $ff = File::Fetch->new(uri => $surl.$sstr."&page=$i");
+  else {
+    my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Pages/Search/Default.aspx?'.$sstr);
     my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
 
     open $wyniki, $where;
+
+    my @strony; my $str_no;
+    %lista;
+
+    while (<$wyniki>) {
+      $str_no = push @strony ,  /Default\.aspx\?page=(\d+)&/g;
+    }
+
+    seek ($wyniki, 0, 0);
     %lista = __search_wyniki $wyniki, %lista;
     close $wyniki;
 
+    #calculate number of pages
+    $str_no=($str_no-4)/2;
+
+    foreach $i (1..$str_no)
+    {
+      my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Pages/Search/Default.aspx?'.$sstr."&page=$i");
+      my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
+
+      open $wyniki, $where;
+      %lista = __search_wyniki $wyniki, %lista;
+      close $wyniki;
+
+    }
+    unless (-d ".cache" ) { mkdir ".cache"; }
+    store \%lista, ".cache/$set";
   }
   return %lista;
 } #sub build_checklist
