@@ -33,7 +33,10 @@ getopts('n:q', \%opts);
 
 if (!$opts{'n'}) { die "-n - search by expansion, -q - print only summary.\n";}
 
-%lista = mtg::build_checklist $opts{'n'};
+my $exp = $opts{'n'};
+if (%mtg::expansions{ $exp }) {$exp = %mtg::expansions{ $exp }};
+
+%lista = mtg::build_checklist $exp;
 
 #       $,="\n";
 #       print sort(values %lista);
