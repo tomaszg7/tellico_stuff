@@ -14,6 +14,7 @@ if ($opts{'N'}) {
     print mtg::entry $opts{'N'}, 0;
     print '<images>';
     print mtg::image $opts{'N'};
+    print '</images></collection></tellico>';
     }
     else { die "-N value is not a number.\n"}
 }
