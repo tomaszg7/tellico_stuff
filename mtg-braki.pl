@@ -61,6 +61,6 @@ foreach $i (keys %lista) {
    }
 }
 
-unless ($opts{'q'}) { print "$_\n" for sort(@out); };
+unless ($opts{'q'}) { print "\n$exp:\n\n"; print "$_\n" for sort(@out); };
 
 print $j." cards missing, ".keys( %lista)." cards total, ".int((1-$j/keys(%lista))*100)."\% complete.\n";
