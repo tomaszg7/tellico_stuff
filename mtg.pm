@@ -273,28 +273,43 @@ sub __parse_wyniki {
   $wyniki = $_[0];
 
   while (<$wyniki>) {
-    if (/<span class=\"cardTitle\">/) {
-	$linia=<$wyniki>;
- 	if ($linia =~ /href=\"\.\.\/Card\/Details\.aspx\?multiverseid=(\d+)\">(.*)<\/a>/) {
-#	if ($linia =~ /multiverseid=(\d+)\">(.*)<\/a/) {
-	      $id = $1; $nm = $2; undef $r;
- 	      while (($lin = <$wyniki>) && !$r) {
-		if ($lin =~ /;rarity=(.)\"/) {
-		    $r=$1;
-		}
- 	      }
+#     if (/<span class=\"cardTitle\">/) {
+# 	$linia=<$wyniki>;
+#  	if ($linia =~ /href=\"\.\.\/Card\/Details\.aspx\?multiverseid=(\d+)\">(.*)<\/a>/) {
+# #	if ($linia =~ /multiverseid=(\d+)\">(.*)<\/a/) {
+#       if (/multiverseid=(\d+).*\'SameWindow\'\)\;\">(.+)<\/a>.*\"rarity\">(.*)<\/td><td/) {
+# 	      $id = $1; $nm = $2; undef $r;
+#  	      while (($lin = <$wyniki>) && !$r) {
+# 		if ($lin =~ /;rarity=(.)\"/) {
+# 		    $r=$1;
+# 		}
+#  	      }
+#                     </td>
+#                 </tr>
+# 
+#  	      $lista{ $1 } = $2." ".$3;
 
- 	      $lista{ $id } = $nm." ".$r;
+      if  (/<a id=.*cardTitle.*multiverseid=\d+\">(.*)<\/a>/) {
+	    $nm = $1; undef $flag; #print "$1\n";
+ 	      while (($lin = <$wyniki>) && !$flag) {
+ 		if ($lin =~ /\?multiverseid=/) {
+# 			    print "$lin\n";
+		    while ($lin =~ /\?multiverseid=(\d+).+?\;rarity=(.)\"/g) {
+			$lista{ $1 } = $nm." ".$2;
+# 			print "$1 $nm $2\n";
+		    };
+		$flag=1;
+ 		}
+	}
 	}
     }
-  }
-  return 1;
+    return 1;
 } # sub parse_wyniki
 
 sub build_checklist {
   $set = $_[0];
   $set =~ s/\s+/+/g;
-  $sstr = "set=[\"".$set."\"]"; #output=checklist&
+  $sstr = "output=compact&set=[\"".$set."\"]"; #output=checklist&
 
   if ( -f "$cache_dir/sets/$set" ) {
     %lista = %{retrieve("$cache_dir/sets/$set")};
@@ -330,7 +345,7 @@ sub build_checklist {
 
     }
     unless (-d "$cache_dir/sets" ) { mkdir "$cache_dir/sets"; }
-    store \%lista, "$cache_dir/sets/$set";
+    unless (keys( %lista) == 0) { store \%lista, "$cache_dir/sets/$set"; }
   }
   return %lista;
 } #sub build_checklist
