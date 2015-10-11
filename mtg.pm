@@ -4,7 +4,9 @@ use File::Fetch;
 use MIME::Base64 qw(encode_base64);
 use File::Copy;
 use Storable;
-#use Switch;
+
+
+$cache_dir = $ENV{"HOME"}."/.cache/mtg_perl";
 
 sub __kolory {
  my $tekst = $_[0];
@@ -21,22 +23,16 @@ sub __kolory {
 sub entry {
     my $numer = $_[0];
     my $i =  $_[1];
-    my $mana;
-    my $name;
-    my $types;
-    my $ctext;
-    my $ftext;
-    my $p; my $t;
-    my $exp;
-    my $rare;
-    my $cnum;
-    my $art;
-
+    my %entry;
     my $xmltypes;
     my $xmlsubtypes;
 
-    my $ff = File::Fetch->new(uri => "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=$numer");
-    my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
+    if ( -f "$cache_dir/cards/$numer" ) {
+      %entry = %{retrieve("$cache_dir/cards/$numer")};
+    }
+    else {
+      my $ff = File::Fetch->new(uri => "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=$numer");
+      my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
 
 
     open my $datafile, $where;
@@ -44,8 +40,8 @@ sub entry {
         if (/Card Name:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($name) =  ($linia =~ /\s*(.*)<\/div>/ );
-	    $name =~ s/&/&amp;/;
+	    ($entry{name}) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $entry{name} =~ s/&/&amp;/;
 	}
 	elsif (/Mana Cost:<\/div>/) {
 	    $linia=<$datafile>;
@@ -53,39 +49,39 @@ sub entry {
 	    @spl = split(/\/>/,$linia);
 	    while ($ss = shift @spl) {
 		if ($ss =~ /alt=\"(.+?)\"/){
-		    $mana .= $1;
+		    $entry{mana} .= $1;
 		}
 	    }
-	    $mana=__kolory($mana);
+	    $entry{mana}=__kolory($entry{mana});
 	}
 	elsif (/Types:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($types) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    ($entry{types}) =  ($linia =~ /\s*(.*)<\/div>/ );
 	}
 	elsif (/Card Text:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($ctext) =  ($linia =~ /\s*(.*)<\/div>/ );
-	    $ctext =~ s/<\/div>/\n\n/g;
-	    $ctext =~ s/<img.*?alt="(.*?)".*?\/>/__kolory($1)/eg;
-	    $ctext =~ s|<.+?>||g;
-	    $ctext =~ s/&/&amp;/;
+	    ($entry{ctext}) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $entry{ctext} =~ s/<\/div>/\n\n/g;
+	    $entry{ctext} =~ s/<img.*?alt="(.*?)".*?\/>/__kolory($1)/eg;
+	    $entry{ctext} =~ s|<.+?>||g;
+	    $entry{ctext} =~ s/&/&amp;/;
 	}
 	elsif (/Flavor Text:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($ftext) =  ($linia =~ /\s*(.*)<\/div>/ );
-	    $ftext =~ s/<\/div>/\n\n/g;
-	    $ftext =~ s|<.+?>||g;
-	    $ftext =~ s/&/&amp;/;
+	    ($entry{ftext}) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $entry{ftext} =~ s/<\/div>/\n\n/g;
+	    $entry{ftext} =~ s|<.+?>||g;
+	    $entry{ftext} =~ s/&/&amp;/;
         }
 	elsif (/<b>P\/T:<\/b><\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
 	    if ($linia =~ /\s*(.*)\s\/\s(.*)<\/div>/ ) {
-		$p=$1;
-		$t=$2;
+		$entry{p}=$1;
+		$entry{t}=$2;
 	    }
         }
 	elsif (/Expansion:<\/div>/) {
@@ -93,61 +89,63 @@ sub entry {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($exp) =  ($linia =~ /.*\">(.*)<\/a>/ );
-	    $exp =~ s/Magic.*Conspiracy/Conspiracy/;
+	    ($entry{exp}) =  ($linia =~ /.*\">(.*)<\/a>/ );
+	    $entry{exp} =~ s/Magic.*Conspiracy/Conspiracy/;
 	}
 	elsif (/Rarity:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($rare) =  ($linia =~ /\'>(.*)<\/span><\/div>/ );
+	    ($entry{rare}) =  ($linia =~ /\'>(.*)<\/span><\/div>/ );
 	}
 	elsif (/Card Number:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($cnum) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    ($entry{cnum}) =  ($linia =~ /\s*(.*)<\/div>/ );
 	}
 	elsif (/Artist:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($art) =  ($linia =~ /\">(.*)<\/a><\/div>/ );
-	    $art =~ s/&/&amp;/;
+	    ($entry{art}) =  ($linia =~ /\">(.*)<\/a><\/div>/ );
+	    $entry{art} =~ s/&/&amp;/;
 	}
     }
 
     close $datafile;
 
     my $j=0;
-	if ($mana =~ /R/ ) {
-	    $color="Red";
+	if ($entry{mana} =~ /R/ ) {
+	    $entry{color}="Red";
 	    $j++;
 	}
-	if ($mana =~ /B/ ) {
-	    $color="Black";
+	if ($entry{mana} =~ /B/ ) {
+	    $entry{color}="Black";
 	    $j++;
 	}
-	if ($mana =~ /U/ ) {
-	    $color="Blue";
+	if ($entry{mana} =~ /U/ ) {
+	    $entry{color}="Blue";
 	    $j++;
 	}
-	if ($mana =~ /G/ ) {
-	    $color="Green";
+	if ($entry{mana} =~ /G/ ) {
+	    $entry{color}="Green";
 	    $j++;
 	}
-	if ($mana =~ /W/ ) {
-	    $color="White";
+	if ($entry{mana} =~ /W/ ) {
+	    $entry{color}="White";
 	    $j++;
 	}
 	if ($j > 1 ) {
-	    $color="Multi";
+	    $entry{color}="Multi";
 	}
-	elsif ($types =~ /[lL]and/ ) {
-	    $color="Land";
+	elsif ($entry{types} =~ /[lL]and/ ) {
+	    $entry{color}="Land";
 	}
 	elsif ($j == 0) {
-	    $color="Colorless";
+	    $entry{color}="Colorless";
 	}
-#####
-	if ($types =~ /(.*)\s*\x{e2}\x{80}\x{94}\s*(.*)/) {
+    unless (-d "$cache_dir/cards" ) { mkdir "$cache_dir/cards"; }
+    store \%entry, "$cache_dir/cards/$numer";
+    }
+	if ($entry{types} =~ /(.*)\s*\x{e2}\x{80}\x{94}\s*(.*)/) {
 	    my $t = $1; my $st= $2;
 	    if ($t =~ /(Basic.*Land)/) {
 		$xmltypes="<types>$1<\/types>";
@@ -161,36 +159,36 @@ sub entry {
 	    }
 	}
 	else {
-	    if ($types =~ /(World Enchantment|Enchant Creature)/) {
+	    if ($entry{types} =~ /(World Enchantment|Enchant Creature)/) {
 		$xmltypes="<types>$1<\/types>";
 	    } else {
-		$xmltypes="<types>".join("<\/types>\n<types>",split(" ", $types))."<\/types>"
+		$xmltypes="<types>".join("<\/types>\n<types>",split(" ", $entry{types}))."<\/types>"
 	    }
 	}
-#####
+
 
 return <<ENTRY;
 <entry id="$i">
 <multiverseid>$numer</multiverseid>
-<title>$name</title>
-<mana-cost>$mana</mana-cost>
+<title>$entry{name}</title>
+<mana-cost>$entry{mana}</mana-cost>
 <typess>
 $xmltypes
 </typess>
 <subtypess>
 $xmlsubtypes
 </subtypess>
-<power>$p</power>
-<tough>$t</tough>
-<card-number>$cnum</card-number>
-<expansion>$exp</expansion>
-<rarity>$rare</rarity>
+<power>$entry{p}</power>
+<tough>$entry{t}</tough>
+<card-number>$entry{cnum}</card-number>
+<expansion>$entry{exp}</expansion>
+<rarity>$entry{rare}</rarity>
 <illustrators>
-<illustrator>$art</illustrator>
+<illustrator>$entry{art}</illustrator>
 </illustrators>
-<flavor-text>$ftext</flavor-text>
-<card-text>$ctext</card-text>
-<color>$color</color>
+<flavor-text>$entry{ftext}</flavor-text>
+<card-text>$entry{ctext}</card-text>
+<color>$entry{color}</color>
 <picture>$numer.jpeg</picture>
 </entry>
 ENTRY
@@ -224,27 +222,32 @@ HEAD
 sub image {
     my $numer = $_[0];
 
-    my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid='.$numer.'&type=card');
-    my $where = $ff->fetch( to => '/tmp' ) or die $ff->error;;
-
-    open my $pic, $where;
-    
-    my $out = '<image format="JPEG" id="'.$numer.'.jpeg">';
-    while (read($pic, $buf, 60*57)) {
-	$out .= encode_base64($buf);
+    unless ( -f "$cache_dir/images/$numer.jpeg" ) {
+      my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid='.$numer.'&type=card');
+      my $where = $ff->fetch( to => '/tmp' ) or die $ff->error;;
+      move $where, "$cache_dir/images/$numer.jpeg";
     }
-    close $pic;
-    $out .= '</image>';
-    return $out;
+      open my $pic, "$cache_dir/images/$numer.jpeg";
+    
+      my $out = '<image format="JPEG" id="'.$numer.'.jpeg">';
+      while (read($pic, $buf, 60*57)) {
+	$out .= encode_base64($buf);
+      }
+      close $pic;
+      $out .= '</image>';
+      return $out;
 }
 
 sub image_ext {
     my $numer = $_[0];
 
     unless ( -f "out_files/".$numer.".jpeg" ) {
-      my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid='.$numer.'&type=card');
-      my $where = $ff->fetch( to => '/tmp' ) or die $ff->error;
-      move $where, "out_files/".$numer.".jpeg";
+      unless ( -f "$cache_dir/images/$numer.jpeg" ) {
+	  my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid='.$numer.'&type=card');
+	  my $where = $ff->fetch( to => '/tmp' ) or die $ff->error;;
+	  move $where, "$cache_dir/images/$numer.jpeg";
+      }
+      move "$cache_dir/images/$numer.jpeg", "out_files/";
     }
     return '<image format="JPEG" id="'.$numer.'.jpeg"/>';
 }
@@ -293,8 +296,8 @@ sub build_checklist {
   $set =~ s/\s+/+/g;
   $sstr = "set=[\"".$set."\"]"; #output=checklist&
 
-  if ( -f ".cache/$set" ) {
-    %lista = %{retrieve(".cache/$set")};
+  if ( -f "$cache_dir/sets/$set" ) {
+    %lista = %{retrieve("$cache_dir/sets/$set")};
   }
   else {
     my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Pages/Search/Default.aspx?'.$sstr);
@@ -326,20 +329,12 @@ sub build_checklist {
       close $wyniki;
 
     }
-    unless (-d ".cache" ) { mkdir ".cache"; }
-    store \%lista, ".cache/$set";
+    unless (-d "$cache_dir/sets" ) { mkdir "$cache_dir/sets"; }
+    store \%lista, "$cache_dir/sets/$set";
   }
   return %lista;
 } #sub build_checklist
 
-# sub decode_expansion {
-# 	switch ($_[0]) {
-# 		case "BFZ"	{ return "Battle for Zendikar" }
-# # 		case [1..10,42]	{ print "number in list" }
-# # 		case /\w+/	{ print "pattern" }
-# 		else		{ return $_[0] }
-# 	}
-# } #sub decode_expansion 
 
 %expansions = (
 ATQ => 'Antiquities',
