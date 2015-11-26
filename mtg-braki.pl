@@ -29,9 +29,9 @@ sub read_base {
   return %lst;
 } # sub read_base
 
-getopts('N:n:quCURMLh', \%opts);
+getopts('N:n:quCURMLhs', \%opts);
 
-unless (($opts{'n'}) || ($opts{'N'})) { die "-n - search by expansion, -N - seach by expansion list, -q - print only summary, -u - print id.\n";}
+unless (($opts{'n'}) || ($opts{'N'})) { die "-n: search by expansion, -N: seach by expansion list, -q: print only summary, -u: print id, -s: skip summary.\n";}
 
 %karty = read_base;
 
@@ -63,6 +63,7 @@ foreach $i (keys %lista) {
 
 unless ($opts{'q'}) { print "\n$exp:\n\n"; print "$_\n" for sort(@out); };
 
+unless ($opts{'s'}) {
 print "$exp: $j cards missing";
 if ($do_grep){
   print " with rarity mask "; 
@@ -76,4 +77,5 @@ else {
   print ", ".keys( %lista)." cards total, ".int((1-$j/keys(%lista))*100)."\% complete";
 }
 print ".\n";
+}
 }
