@@ -29,18 +29,21 @@ sub read_base {
   return %lst;
 } # sub read_base
 
-getopts('n:quCURML', \%opts);
+getopts('N:n:quCURMLh', \%opts);
 
-if (!$opts{'n'}) { die "-n - search by expansion, -q - print only summary, -u - print id.\n";}
+unless (($opts{'n'}) || ($opts{'N'})) { die "-n - search by expansion, -N - seach by expansion list, -q - print only summary, -u - print id.\n";}
 
-my $exp = $opts{'n'};
+%karty = read_base;
+
+my @exps = split /[ ,]/, $opts{'N'};
+if ($opts{'n'}) { push @exps, $opts{'n'} }
+
+foreach $exp (@exps) {
 if ($mtg::expansions{ $exp }) {$exp = $mtg::expansions{ $exp }};
 
 %lista = mtg::build_checklist $exp;
 
 if (keys( %lista) == 0) { die "Wrong expansion name.\n"; }
-
-%karty = read_base;
 
 $j=0;
 
@@ -73,3 +76,4 @@ else {
   print ", ".keys( %lista)." cards total, ".int((1-$j/keys(%lista))*100)."\% complete";
 }
 print ".\n";
+}
