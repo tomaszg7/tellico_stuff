@@ -17,8 +17,8 @@ sub read_base {
       $lst{ $1 } = "1";
   }
 
-  my $baza = Archive::Zip->new();
-  unless ( $baza->read( '../mtg-liga2.tc' ) == AZ_OK ) {
+  $baza = Archive::Zip->new();
+  unless ( $baza->read( '../mtg-liga3.tc' ) == AZ_OK ) {
        die 'read error';
   }
   foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
@@ -29,38 +29,47 @@ sub read_base {
   return %lst;
 } # sub read_base
 
-getopts('n:q', \%opts);
+getopts('n:quCURML', \%opts);
 
-if (!$opts{'n'}) { die "-n - search by expansion, -q - print only summary.\n";}
+if (!$opts{'n'}) { die "-n - search by expansion, -q - print only summary, -u - print id.\n";}
 
 my $exp = $opts{'n'};
-if (%mtg::expansions{ $exp }) {$exp = %mtg::expansions{ $exp }};
+if ($mtg::expansions{ $exp }) {$exp = $mtg::expansions{ $exp }};
 
 %lista = mtg::build_checklist $exp;
-
-#       $,="\n";
-#       print sort(values %lista);
 
 if (keys( %lista) == 0) { die "Wrong expansion name.\n"; }
 
 %karty = read_base;
 
-#   $,="\n";
-#   print (keys %karty)."\n";
-
-@brak;
-
 $j=0;
 
-@out;
+my @out;
+
+my $do_grep = 0;
+
+if (($opts{'C'}) | ($opts{'U'}) | ($opts{'R'}) | ($opts{'M'}) | ($opts{'L'})) { $do_grep = 1; }
+
 
 foreach $i (keys %lista) {
-   unless (exists $karty{ $i }) {
-       push @out, $lista{ $i };
+   if ((!exists $karty{ $i }) && ((!$do_grep) || (exists $opts{substr $lista { $i }, -1}  ))) {
+       push @out, ($opts{'u'}) ? "$i $lista{ $i }" : "$lista{ $i }";
        $j++;
    }
 }
 
 unless ($opts{'q'}) { print "\n$exp:\n\n"; print "$_\n" for sort(@out); };
 
-print $j." cards missing, ".keys( %lista)." cards total, ".int((1-$j/keys(%lista))*100)."\% complete.\n";
+print "$exp: $j cards missing";
+if ($do_grep){
+  print " with rarity mask "; 
+  foreach $r ("C", "U", "R", "M", "L") {
+     if (exists $opts{ $r }) {
+       print $r;
+    }
+ }
+}
+else {
+  print ", ".keys( %lista)." cards total, ".int((1-$j/keys(%lista))*100)."\% complete";
+}
+print ".\n";
