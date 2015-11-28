@@ -29,9 +29,16 @@ sub read_base {
   return %lst;
 } # sub read_base
 
-getopts('N:n:quCURMLhs', \%opts);
+getopts('N:n:quCURMLhsl', \%opts);
 
-unless (($opts{'n'}) || ($opts{'N'})) { die "-n: search by expansion, -N: seach by expansion list, -q: print only summary, -u: print id, -s: skip summary.\n";}
+unless (($opts{'l'}) || ($opts{'n'}) || ($opts{'N'})) { die "-n: search by expansion, -N: seach by expansion list, -q: print only summary, -u: print id, -s: skip summary, -l: print out aliases.\n";}
+
+if ($opts{'l'}) {
+    foreach $i (keys %mtg::expansions) {
+	print $i.": ".%mtg::expansions{ $i }."\n";
+    }
+    die;
+}
 
 %karty = read_base;
 
