@@ -311,6 +311,8 @@ sub build_checklist {
   $set =~ s/\s+/+/g;
   $sstr = "output=compact&set=[\"".$set."\"]"; #output=checklist&
 
+  %lista = ();
+
   if ( -f "$cache_dir/sets/$set" ) {
     %lista = %{retrieve("$cache_dir/sets/$set")};
   }
@@ -321,7 +323,6 @@ sub build_checklist {
     open $wyniki, $where;
 
     my @strony; my $str_no;
-    %lista;
 
     while (<$wyniki>) {
       $str_no = push @strony ,  /Default\.aspx\?page=(\d+)&/g;
