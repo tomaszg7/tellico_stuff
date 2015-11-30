@@ -12,12 +12,12 @@ use mtg;
 
 sub save_base {
   $dane = $_[0];
-
+  
   my $baza = Archive::Zip->new();
-    $baza->addString( $dane, 'tellico.xml' );
-    unless ( $baza->writeToFileNamed('out.tc') == AZ_OK ) {
-       die 'write error';
-    }
+  $baza->addString( $dane, 'tellico.xml' );
+  unless ( $baza->writeToFileNamed('out.tc') == AZ_OK ) {
+    die 'write error';
+  }
 } # sub save_base
 
 
@@ -38,19 +38,19 @@ $out = mtg::header;
 
 $i=0;
 while ($n = shift @list)
-    {
-	$out .= mtg::entry $n, $i;
-	$i++;
-    }
+{
+  $out .= mtg::entry $n, $i;
+  $i++;
+}
 
 $out .= '<images>';
 
 unless (-d "out_files" ) { mkdir "out_files"; }
 
 while ($n = shift @list2)
-    {
-	$out .= mtg::image_ext $n;
-    }
+{
+  $out .= mtg::image_ext $n;
+}
 
 
 $out .= '</images></collection></tellico>';
