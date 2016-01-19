@@ -48,7 +48,7 @@ if ($opts{'n'}) { push @exps, $opts{'n'} }
 foreach $exp (@exps) {
 if ($mtg::expansions{ $exp }) {$exp = $mtg::expansions{ $exp }};
 
-%lista = mtg::build_checklist $exp;
+%lista = mtg::build_checklist $exp, "set";
 
 if (keys( %lista) == 0) { die "Wrong expansion name.\n"; }
 

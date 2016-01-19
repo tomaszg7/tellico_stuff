@@ -17,6 +17,7 @@ sub __kolory {
 	$tekst =~ s/Black/B/g;
 	$tekst =~ s/White/W/g;
 	$tekst =~ s/Variable Colorless/X/g;
+	$tekst =~ s/Colorless/C/g;	
     return $tekst;
 }
 
@@ -309,7 +310,8 @@ sub __parse_wyniki {
 sub build_checklist {
   $set = $_[0];
   $set =~ s/\s+/+/g;
-  $sstr = "output=compact&set=[\"".$set."\"]"; #output=checklist&
+  $type = $_[1];
+  $sstr = "output=compact&".$type."=[\"".$set."\"]"; #output=checklist&
 
   %lista = ();
 
@@ -345,8 +347,10 @@ sub build_checklist {
       close $wyniki;
 
     }
-    unless (-d "$cache_dir/sets" ) { mkdir "$cache_dir/sets"; }
-    unless (keys( %lista) == 0) { store \%lista, "$cache_dir/sets/$set"; }
+    if ($type = "set") {
+      unless (-d "$cache_dir/sets" ) { mkdir "$cache_dir/sets"; }
+      unless (keys( %lista) == 0) { store \%lista, "$cache_dir/sets/$set"; }
+    }
   }
   return %lista;
 } #sub build_checklist

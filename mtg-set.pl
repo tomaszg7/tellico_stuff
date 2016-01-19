@@ -28,7 +28,7 @@ if (!$opts{'n'}) { die "-n - search by expansion, -c - limit to color WUBRG.\n";
 my $exp = $opts{'n'};
 if (%mtg::expansions{ $exp }) {$exp = %mtg::expansions{ $exp }};
 
-%lista = mtg::build_checklist $exp;
+%lista = mtg::build_checklist $exp, "set";
 
 # @list = (keys %lista)[0..2]; #wybranie 3 pierwszych elementow
 @list = keys %lista;
