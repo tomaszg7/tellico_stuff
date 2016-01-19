@@ -17,7 +17,7 @@ sub __kolory {
 	$tekst =~ s/Black/B/g;
 	$tekst =~ s/White/W/g;
 	$tekst =~ s/Variable Colorless/X/g;
-	$tekst =~ s/Colorless/C/g;	
+	$tekst =~ s/Colorless/C/g;
     return $tekst;
 }
 
