@@ -160,7 +160,7 @@ sub entry {
 	    }
 	}
 	else {
-	    if ($entry{types} =~ /(World Enchantment|Enchant Creature)/) {
+	    if ($entry{types} =~ /(Basic Land|World Enchantment|Enchant Creature)/) {
 		$xmltypes="<types>$1<\/types>";
 	    } else {
 		$xmltypes="<types>".join("<\/types>\n<types>",split(" ", $entry{types}))."<\/types>"
