@@ -1,8 +1,8 @@
 package dice;
 
 #use MIME::Base64 qw(encode_base64);
-use File::Copy;
-use Storable;
+#use File::Copy;
+#use Storable;
 
 
 $img_dir = $ENV{"HOME"}."/.cache/mtg_perl/dice_cards";
@@ -118,13 +118,15 @@ HEAD
   orangelanterncorps => "Orange Lantern Corps", 
   spiderfriends => "Spider Friends",
   sinistersix => "Sinister Six",
-  monster => "Monster",
+  monster => "Monsters",
   emeraldenclave => "Emerald Enclave",
   orderofthegauntlet => "Order of the Gauntlet",
   lordsalliance => "Lords Alliance",
-  harpers => "Harpers",
-  zhentarim => "Zhentarim",
+  harpers => "The Harpers",
+  zhentarim => "The Zhentarim",
   icecream => "Energy Conduit",
+  supermanorg => "Team Superman",
+  batmanorg => "Batman Family",
 );
 
 %exp = (
@@ -136,6 +138,8 @@ HEAD
   AoU => 'Age of Ultron',
   WoL => 'War of Light',
   ASM => 'The Amazing Spider-Man',
+  FUS => 'Faer&#251;n Under Siege',
+  WF => "World's Finest",
 );
 
 1;
