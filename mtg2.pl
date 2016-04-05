@@ -11,7 +11,7 @@ if (!$opts{'n'} && !$opts{'a'} && !$opts{'N'}) { die "-n - search by name, -N - 
 if ($opts{'N'}) {
   if ($opts{'N'} =~ /\d+/ ) {
     print mtg::header;
-    print mtg::entry $opts{'N'}, 0;
+    print mtg::print_entry (mtg::get_entry ($opts{'N'}), 0);
     print '<images>';
     print mtg::image $opts{'N'};
     print '</images></collection></tellico>';

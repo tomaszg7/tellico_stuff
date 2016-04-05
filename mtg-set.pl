@@ -39,7 +39,7 @@ $out = mtg::header;
 $i=0;
 while ($n = shift @list)
 {
-  $out .= mtg::entry $n, $i;
+  $out .= mtg::print_entry (mtg::get_entry ($n), $i);
   $i++;
 }
 

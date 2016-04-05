@@ -5,7 +5,6 @@ use MIME::Base64 qw(encode_base64);
 use File::Copy;
 use Storable;
 
-
 $cache_dir = $ENV{"HOME"}."/.cache/mtg_perl";
 
 sub __kolory {
@@ -21,28 +20,27 @@ sub __kolory {
     return $tekst;
 }
 
-sub entry {
+sub get_entry {
     my $numer = $_[0];
-    my $i =  $_[1];
+    my $n =  $_[1];
     my %entry;
-    my $xmltypes;
-    my $xmlsubtypes;
 
     if ( -f "$cache_dir/cards/$numer" ) {
-      %entry = %{retrieve("$cache_dir/cards/$numer")};
+      return \%{retrieve("$cache_dir/cards/$numer")};
     }
-    else {
-      my $ff = File::Fetch->new(uri => "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=$numer");
-      my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
-
+    
+    my $ff = File::Fetch->new(uri => "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=$numer");
+    my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
+    my $i = 0;
 
     open my $datafile, $where;
     while (<$datafile>) {
         if (/Card Name:<\/div>/) {
+	    $i++;
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($entry{name}) =  ($linia =~ /\s*(.*)<\/div>/ );
-	    $entry{name} =~ s/&/&amp;/;
+	    ($entry{name.$i}) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $entry{name.$i} =~ s/&/&amp;/;
 	}
 	elsif (/Mana Cost:<\/div>/) {
 	    $linia=<$datafile>;
@@ -50,39 +48,39 @@ sub entry {
 	    @spl = split(/\/>/,$linia);
 	    while ($ss = shift @spl) {
 		if ($ss =~ /alt=\"(.+?)\"/){
-		    $entry{mana} .= $1;
+		    $entry{mana.$i} .= $1;
 		}
 	    }
-	    $entry{mana}=__kolory($entry{mana});
+	    $entry{mana.$i}=__kolory($entry{mana.$i});
 	}
 	elsif (/Types:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($entry{types}) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    ($entry{types.$i}) =  ($linia =~ /\s*(.*)<\/div>/ );
 	}
 	elsif (/Card Text:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($entry{ctext}) =  ($linia =~ /\s*(.*)<\/div>/ );
-	    $entry{ctext} =~ s/<\/div>/\n\n/g;
-	    $entry{ctext} =~ s/<img.*?alt="(.*?)".*?\/>/__kolory($1)/eg;
-	    $entry{ctext} =~ s|<.+?>||g;
-	    $entry{ctext} =~ s/&/&amp;/;
+	    ($entry{ctext.$i}) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $entry{ctext.$i} =~ s/<\/div>/\n\n/g;
+	    $entry{ctext.$i} =~ s/<img.*?alt="(.*?)".*?\/>/__kolory($1)/eg;
+	    $entry{ctext.$i} =~ s|<.+?>||g;
+	    $entry{ctext.$i} =~ s/&/&amp;/;
 	}
 	elsif (/Flavor Text:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($entry{ftext}) =  ($linia =~ /\s*(.*)<\/div>/ );
-	    $entry{ftext} =~ s/<\/div>/\n\n/g;
-	    $entry{ftext} =~ s|<.+?>||g;
-	    $entry{ftext} =~ s/&/&amp;/;
+	    ($entry{ftext.$i}) =  ($linia =~ /\s*(.*)<\/div>/ );
+	    $entry{ftext.$i} =~ s/<\/div>/\n\n/g;
+	    $entry{ftext.$i} =~ s|<.+?>||g;
+	    $entry{ftext.$i} =~ s/&/&amp;/;
         }
 	elsif (/<b>P\/T:<\/b><\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
 	    if ($linia =~ /\s*(.*)\s\/\s(.*)<\/div>/ ) {
-		$entry{p}=$1;
-		$entry{t}=$2;
+		$entry{p.$i}=$1;
+		$entry{t.$i}=$2;
 	    }
         }
 	elsif (/Expansion:<\/div>/) {
@@ -106,31 +104,35 @@ sub entry {
 	elsif (/Artist:<\/div>/) {
 	    $linia=<$datafile>;
 	    $linia=<$datafile>;
-	    ($entry{art}) =  ($linia =~ /\">(.*)<\/a><\/div>/ );
-	    $entry{art} =~ s/&/&amp;/;
+	    ($entry{art.$i}) =  ($linia =~ /\">(.*)<\/a><\/div>/ );
+	    $entry{art.$i} =~ s/&/&amp;/;
 	}
     }
 
     close $datafile;
-
+    $entry{faces} = $i;
+    if ($i>2) {print STDERR "Warning: found more faces than 2.\n";}
+    
     my $j=0;
-	if ($entry{mana} =~ /R/ ) {
+    foreach $i (1..$entry{faces})
+    {
+	if ($entry{mana.$i} =~ /R/ ) {
 	    $entry{color}="Red";
 	    $j++;
 	}
-	if ($entry{mana} =~ /B/ ) {
+	if ($entry{mana.$i} =~ /B/ ) {
 	    $entry{color}="Black";
 	    $j++;
 	}
-	if ($entry{mana} =~ /U/ ) {
+	if ($entry{mana.$i} =~ /U/ ) {
 	    $entry{color}="Blue";
 	    $j++;
 	}
-	if ($entry{mana} =~ /G/ ) {
+	if ($entry{mana.$i} =~ /G/ ) {
 	    $entry{color}="Green";
 	    $j++;
 	}
-	if ($entry{mana} =~ /W/ ) {
+	if ($entry{mana.$i} =~ /W/ ) {
 	    $entry{color}="White";
 	    $j++;
 	}
@@ -143,67 +145,103 @@ sub entry {
 	elsif ($j == 0) {
 	    $entry{color}="Colorless";
 	}
-    unless (-d "$cache_dir/cards" ) { mkdir "$cache_dir/cards"; }
-    store \%entry, "$cache_dir/cards/$numer";
-    }
-	if ($entry{types} =~ /(.*)\s*\x{e2}\x{80}\x{94}\s*(.*)/) {
+    
+    if ($entry{types.$i} =~ /(.*)\s*\x{e2}\x{80}\x{94}\s*(.*)/) {
 	    my $t = $1; my $st= $2;
 	    if ($t =~ /(Basic.*Land)/) {
-		$xmltypes="<types>$1<\/types>";
+		$entry{xmltypes.$i}="<types>$1<\/types>";
 	    } else {
-		$xmltypes="<types>".join("<\/types>\n<types>",split(" ", $t))."<\/types>"
+		$entry{xmltypes.$i}="<types>".join("<\/types>\n<types>",split(" ", $t))."<\/types>"
 	    }
 	    if ($st =~ /(Urza.*(Power|Mine|Tower).*)/) {
-		$xmlsubtypes = "<subtypes>".$1."<\/subtypes>";
+		$entry{xmlsubtypes.$i} = "<subtypes>".$1."<\/subtypes>";
 	    } else {
-		$xmlsubtypes = "<subtypes>".join("<\/subtypes>\n<subtypes>",split(" ", $st))."<\/subtypes>";
+		$entry{xmlsubtypes.$i} = "<subtypes>".join("<\/subtypes>\n<subtypes>",split(" ", $st))."<\/subtypes>";
 	    }
 	}
 	else {
-	    if ($entry{types} =~ /(Basic Land|World Enchantment|Enchant Creature)/) {
-		$xmltypes="<types>$1<\/types>";
+	    if ($entry{types.$i} =~ /(Basic Land|World Enchantment|Enchant Creature)/) {
+		$entry{xmltypes.$i}="<types>$1<\/types>";
 	    } else {
-		$xmltypes="<types>".join("<\/types>\n<types>",split(" ", $entry{types}))."<\/types>"
+		$entry{xmltypes.$i}="<types>".join("<\/types>\n<types>",split(" ", $entry{types.$i}))."<\/types>"
 	    }
 	}
+    }
+    
+   if ($entry->{faces}>=2) {
+      $entry->{xmltypes2} =~ s/types/alttypes/g;
+      $entry->{xmlsubtypes2} =~ s/subtypes/altsubtypes/g;
+   }
 
+    unless (-d "$cache_dir/cards" ) { mkdir "$cache_dir/cards"; }
+    store \%entry, "$cache_dir/cards/$numer";
+    
+    return \%entry;
+} #sub get_entry  
 
-return <<ENTRY;
-<entry id="$i">
+sub print_entry {
+    my $entry = $_[0];
+    my $n =  $_[1];
+    
+#     print Dumper($entry);
+$res = <<ENTRY;
+<entry id="$n">
 <multiverseid>$numer</multiverseid>
-<title>$entry{name}</title>
-<mana-cost>$entry{mana}</mana-cost>
+<title>$entry->{name1}</title>
+<mana-cost>$entry->{mana1}</mana-cost>
 <typess>
-$xmltypes
+$entry{xmltypes1}
 </typess>
 <subtypess>
-$xmlsubtypes
+$entry{xmlsubtypes1}
 </subtypess>
-<power>$entry{p}</power>
-<tough>$entry{t}</tough>
-<card-number>$entry{cnum}</card-number>
-<expansion>$entry{exp}</expansion>
-<rarity>$entry{rare}</rarity>
+<power>$entry->{p1}</power>
+<tough>$entry->{t1}</tough>
+<card-number>$entry->{cnum}</card-number>
+<expansion>$entry->{exp}</expansion>
+<rarity>$entry->{rare}</rarity>
 <illustrators>
-<illustrator>$entry{art}</illustrator>
+<illustrator>$entry->{art1}</illustrator>
 </illustrators>
-<flavor-text>$entry{ftext}</flavor-text>
-<card-text>$entry{ctext}</card-text>
-<color>$entry{color}</color>
+<flavor-text>$entry->{ftext1}</flavor-text>
+<card-text>$entry->{ctext1}</card-text>
+<color>$entry->{color}</color>
 <picture>$numer.jpeg</picture>
-</entry>
 ENTRY
-} #sub entry
+if ($entry->{faces}>=2) {
+  $res .= <<ALT_ENTRY;
+<alttitle>$entry->{name2}</alttitle>
+<altmana-cost>$entry->{mana2}</altmana-cost>
+<alttypess>
+$entry->{xmltypes2}
+</alttypess>
+<altsubtypess>
+$entry->{xmlsubtypes2}
+</altsubtypess>
+<altpower>$entry->{p2}</altpower>
+<alttough>$entry->{t2}</alttough>
+<altillustrators>
+<altillustrator>$entry->{art2}</altillustrator>
+</altillustrators>
+<altflavor-text>$entry->{ftext2}</altflavor-text>
+<altcard-text>$entry->{ctext2}</altcard-text>
+<altpicture>$numer.jpeg</altpicture>
+ALT_ENTRY
+}
+$res .="</entry>";
+
+return $res;
+} #sub print_entry
 
 sub header {
 return <<HEAD;
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE tellico PUBLIC "-//Robby Stephenson/DTD Tellico V11.0//EN" "http://periapsis.org/tellico/dtd/v11/tellico.dtd"><tellico xmlns="http://periapsis.org/tellico/" syntaxVersion="11">
 <collection title="My Collection" type="1">
 <fields>
-    <field title="multiverseid" flags="0" category="General" format="4" description="New Field 1" type="6" name="multiverseid"/>
-    <field title="Name" flags="0" category="General" format="1" description="Title" type="1" name="title"/>
-    <field title="Color" flags="2" category="General" format="4" description="New Field 4" type="3" allowed="Black;Blue;Red;Green;White;Multi;Colorless;Land" name="color"/>
-    <field title="Mana Cost" flags="0" category="General" format="4" description="New Field 1" type="1" name="mana-cost"/>
+   <field title="multiverseid" flags="0" category="General" format="4" description="New Field 1" type="6" name="multiverseid"/>
+   <field title="Name" flags="0" category="General" format="1" description="Title" type="1" name="title"/>
+   <field title="Color" flags="2" category="General" format="4" description="New Field 4" type="3" allowed="Black;Blue;Red;Green;White;Multi;Colorless;Land" name="color"/>
+   <field title="Mana Cost" flags="0" category="General" format="4" description="New Field 1" type="1" name="mana-cost"/>
    <field title="Types" flags="7" category="General" format="4" description="New Field 1" type="1" name="types"/>
    <field title="Subtypes" flags="7" category="General" format="4" description="New Field 1" type="1" name="subtypes"/>
    <field title="Card Text" flags="0" category="Card Text" format="4" description="New Field 2" type="2" name="card-text"/>
@@ -216,6 +254,16 @@ return <<HEAD;
    <field title="Variant" flags="0" category="General" format="4" description="New Field 8" type="1" name="variant"/>
    <field title="Flavor Text" flags="0" category="Flavor Text" format="4" description="New Field 1" type="2" name="flavor-text"/>
    <field title="Picture" flags="0" category="Picture" format="4" description="New Field 1" type="10" name="picture"/>
+   <field title="AltTitle" flags="0" category="Second face" format="1" description="New Field 1" type="1" name="alttitle"/>
+   <field title="AltMana Cost" flags="0" category="Second face" format="4" description="New Field 1" type="1" name="altmana-cost"/>
+   <field title="AltTypes" flags="7" category="Second face" format="4" description="New Field 2" type="1" name="alttypes"/>
+   <field title="AltSubtypes" flags="7" category="Second face" format="4" description="New Field 3" type="1" name="altsubtypes"/>
+   <field title="AltPower" flags="2" category="Second face" format="4" description="New Field 4" type="1" name="altpower"/>
+   <field title="AltTough" flags="2" category="Second face" format="4" description="New Field 5" type="1" name="alttough"/>
+   <field title="AltIllustrator" flags="7" category="Second face" format="4" description="New Field 6" type="1" name="altillustrator"/>
+   <field title="AltCard Text" flags="0" category="AltCard Text" format="4" description="New Field 8" type="2" name="altcard-text"/>
+   <field title="AltFlavor Text" flags="0" category="AltFlavor Text" format="4" description="New Field 7" type="2" name="altflavor-text"/>
+   <field title="AltPicture" flags="0" category="AltPicture" format="4" description="New Field 9" type="10" name="altpicture"/>
 </fields>
 HEAD
 }
@@ -426,6 +474,7 @@ sub build_checklist {
   BFZ => 'Battle for Zendikar',
   EXP => 'Zendikar Expedition',
   OGW => 'Oath of the Gatewatch',
+  SOI => 'Shadows over Innistrad',
   CHR => 'Chronicles',
   MMA => 'Modern Masters',
   MM2 => 'Modern Masters 2015 Edition',
@@ -460,7 +509,8 @@ sub build_checklist {
   M13 => 'Magic 2013',
   M14 => 'Magic 2014 Core Set',
   M15 => 'Magic 2015 Core Set',
-  ORI => 'Magic Origins'
+  ORI => 'Magic Origins',
+  W16 => 'Welcome Deck 2016'
 );
 
 1;
