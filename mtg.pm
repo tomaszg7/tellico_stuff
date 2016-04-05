@@ -176,8 +176,14 @@ sub get_entry {
     }
     
    if ($entry{faces}>=2) {
-      $entry{xmltypes2} =~ s/types/alttypes/g;
-      $entry{xmlsubtypes2} =~ s/subtypes/altsubtypes/g;
+      $entry{title} = $entry{name1}." // ".$entry{name2};
+      if ($entry{ftext2}) {$entry{ftext} = $entry{ftext1}."\n\n-----------------------\n\n".$entry{ftext2};}
+      if ($entry{ctext2}) {$entry{ctext} = $entry{ctext1}."\n\n-----------------------\n\n".$entry{ctext2};}
+   }
+   else {
+      $entry{title} = $entry{name1};
+      $entry{ftext} = $entry{ftext1};
+      $entry{ctext} = $entry{ctext1};
    }
 
     unless (-d "$cache_dir/cards" ) { mkdir "$cache_dir/cards"; }
@@ -193,13 +199,15 @@ sub print_entry {
 $res = <<ENTRY;
 <entry id="$n">
 <multiverseid>$entry->{number}</multiverseid>
-<title>$entry->{name1}</title>
+<title>$entry->{title}</title>
 <mana-cost>$entry->{mana1}</mana-cost>
 <typess>
 $entry->{xmltypes1}
+$entry->{xmltypes2}
 </typess>
 <subtypess>
 $entry->{xmlsubtypes1}
+$entry->{xmlsubtypes2}
 </subtypess>
 <power>$entry->{p1}</power>
 <tough>$entry->{t1}</tough>
@@ -208,29 +216,19 @@ $entry->{xmlsubtypes1}
 <rarity>$entry->{rare}</rarity>
 <illustrators>
 <illustrator>$entry->{art1}</illustrator>
+<illustrator>$entry->{art2}</illustrator>
 </illustrators>
-<flavor-text>$entry->{ftext1}</flavor-text>
-<card-text>$entry->{ctext1}</card-text>
+<flavor-text>$entry->{ftext}</flavor-text>
+<card-text>$entry->{ctext}</card-text>
 <color>$entry->{color}</color>
 <picture>$entry->{image1}.jpeg</picture>
 ENTRY
 if ($entry->{faces}>=2) {
   $res .= <<ALT_ENTRY;
-<alttitle>$entry->{name2}</alttitle>
 <altmana-cost>$entry->{mana2}</altmana-cost>
-<alttypess>
-$entry->{xmltypes2}
-</alttypess>
-<altsubtypess>
-$entry->{xmlsubtypes2}
-</altsubtypess>
 <altpower>$entry->{p2}</altpower>
 <alttough>$entry->{t2}</alttough>
-<altillustrators>
-<altillustrator>$entry->{art2}</altillustrator>
-</altillustrators>
-<altflavor-text>$entry->{ftext2}</altflavor-text>
-<altcard-text>$entry->{ctext2}</altcard-text>
+<variant>Multi</variant>
 ALT_ENTRY
 }
   if ($entry->{image2}) {
@@ -258,8 +256,8 @@ return <<HEAD;
    <field title="Expansion" flags="0" category="General" format="4" description="New Field 5" type="1" name="expansion"/>
    <field title="Rarity" flags="0" category="General" format="4" description="New Field 6" type="1" name="rarity"/>
    <field title="Card Number" flags="0" category="General" format="4" description="New Field 8" type="1" name="card-number"/>
-   <field title="Illustrator" flags="0" category="General" format="4" description="New Field 2" type="1" name="illustrator"/>
-   <field title="Variant" flags="0" category="General" format="4" description="New Field 8" type="1" name="variant"/>
+   <field title="Illustrator" flags="7" category="General" format="4" description="New Field 2" type="1" name="illustrator"/>
+   <field title="Variant" flags="7" category="General" format="4" description="New Field 8" type="1" name="variant"/>
    <field title="Flavor Text" flags="0" category="Flavor Text" format="4" description="New Field 1" type="2" name="flavor-text"/>
    <field title="Picture" flags="0" category="Picture" format="4" description="New Field 1" type="10" name="picture"/>
    <field title="AltTitle" flags="0" category="Second face" format="1" description="New Field 1" type="1" name="alttitle"/>
