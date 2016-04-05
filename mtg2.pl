@@ -11,9 +11,11 @@ if (!$opts{'n'} && !$opts{'a'} && !$opts{'N'}) { die "-n - search by name, -N - 
 if ($opts{'N'}) {
   if ($opts{'N'} =~ /\d+/ ) {
     print mtg::header;
-    print mtg::print_entry (mtg::get_entry ($opts{'N'}), 0);
+    $entry = mtg::get_entry $opts{'N'};
+    print mtg::print_entry ($entry, 0);
     print '<images>';
-    print mtg::image $opts{'N'};
+    print mtg::image $entry->{image1};
+    if ($entry->{image2})  {print mtg::image $entry->{image2};}
     print '</images></collection></tellico>';
   }
   else { die "-N value is not a number.\n"}
@@ -38,18 +40,21 @@ elsif ($opts{'n'} || $opts{'a'} ) {
   
   #wybranie 10 pierwszych wynikow
   @l_tmp1=@lista[0..9];
-  @l_tmp2=@l_tmp1;
   
   $i=0;
+  my @images;
   
   print mtg::header;
   while ($n = shift @l_tmp1)
   {
-    print mtg::entry $n, $i;
+    $entry = mtg::get_entry $n;
+    print mtg::print_entry ($entry, $i);
+    push @images, $entry->{image1};
+    if ($entry->{image2})  {push @images, $entry->{image2};}
     $i++;
   }
   print '<images>';
-  while ($n = shift @l_tmp2)
+  while ($n = shift @images)
   {
     print mtg::image $n;
   }

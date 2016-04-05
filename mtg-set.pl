@@ -32,22 +32,26 @@ if (%mtg::expansions{ $exp }) {$exp = %mtg::expansions{ $exp }};
 
 # @list = (keys %lista)[0..2]; #wybranie 3 pierwszych elementow
 @list = keys %lista;
-@list2=@list;
 
 $out = mtg::header;
 
 $i=0;
+my @images;
+
 while ($n = shift @list)
 {
-  $out .= mtg::print_entry (mtg::get_entry ($n), $i);
-  $i++;
+   $entry = mtg::get_entry $n;
+   $out .= mtg::print_entry ($entry, $i);
+   push @images, $entry->{image1};
+   if ($entry->{image2})  {push @images, $entry->{image2};}
+   $i++;
 }
 
 $out .= '<images>';
 
 unless (-d "out_files" ) { mkdir "out_files"; }
 
-while ($n = shift @list2)
+while ($n = shift @images)
 {
   $out .= mtg::image_ext $n;
 }

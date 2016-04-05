@@ -32,6 +32,9 @@ sub get_entry {
     my $ff = File::Fetch->new(uri => "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=$numer");
     my $where = $ff->fetch(to => '/tmp') or die $ff->error;;
     my $i = 0;
+    my $ii = 0;
+
+    $entry{number} = $numer;
 
     open my $datafile, $where;
     while (<$datafile>) {
@@ -107,6 +110,10 @@ sub get_entry {
 	    ($entry{art.$i}) =  ($linia =~ /\">(.*)<\/a><\/div>/ );
 	    $entry{art.$i} =~ s/&/&amp;/;
 	}
+	elsif (/Image\.ashx\?multiverseid=(\d+)&amp;type=card/) {
+	    $ii++;
+	    if (($ii==1) || ($entry{image1} != $1) ) { $entry{image.$ii} = $1;}
+	}
     }
 
     close $datafile;
@@ -168,9 +175,9 @@ sub get_entry {
 	}
     }
     
-   if ($entry->{faces}>=2) {
-      $entry->{xmltypes2} =~ s/types/alttypes/g;
-      $entry->{xmlsubtypes2} =~ s/subtypes/altsubtypes/g;
+   if ($entry{faces}>=2) {
+      $entry{xmltypes2} =~ s/types/alttypes/g;
+      $entry{xmlsubtypes2} =~ s/subtypes/altsubtypes/g;
    }
 
     unless (-d "$cache_dir/cards" ) { mkdir "$cache_dir/cards"; }
@@ -183,17 +190,16 @@ sub print_entry {
     my $entry = $_[0];
     my $n =  $_[1];
     
-#     print Dumper($entry);
 $res = <<ENTRY;
 <entry id="$n">
-<multiverseid>$numer</multiverseid>
+<multiverseid>$entry->{number}</multiverseid>
 <title>$entry->{name1}</title>
 <mana-cost>$entry->{mana1}</mana-cost>
 <typess>
-$entry{xmltypes1}
+$entry->{xmltypes1}
 </typess>
 <subtypess>
-$entry{xmlsubtypes1}
+$entry->{xmlsubtypes1}
 </subtypess>
 <power>$entry->{p1}</power>
 <tough>$entry->{t1}</tough>
@@ -206,7 +212,7 @@ $entry{xmlsubtypes1}
 <flavor-text>$entry->{ftext1}</flavor-text>
 <card-text>$entry->{ctext1}</card-text>
 <color>$entry->{color}</color>
-<picture>$numer.jpeg</picture>
+<picture>$entry->{image1}.jpeg</picture>
 ENTRY
 if ($entry->{faces}>=2) {
   $res .= <<ALT_ENTRY;
@@ -225,9 +231,11 @@ $entry->{xmlsubtypes2}
 </altillustrators>
 <altflavor-text>$entry->{ftext2}</altflavor-text>
 <altcard-text>$entry->{ctext2}</altcard-text>
-<altpicture>$numer.jpeg</altpicture>
 ALT_ENTRY
 }
+  if ($entry->{image2}) {
+    $res .= "<altpicture>$entry->{image2}.jpeg</altpicture>"
+  }
 $res .="</entry>";
 
 return $res;
