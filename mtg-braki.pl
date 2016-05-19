@@ -25,6 +25,15 @@ sub read_base {
       $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
       $lst{ $1 } = "1";
   }
+
+  $baza = Archive::Zip->new();
+  unless ( $baza->read( '../mtg-agn.tc' ) == AZ_OK ) {
+       die 'read error';
+  }
+  foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
+      $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
+      $lst{ $1 } = "1";
+  }
   
   return %lst;
 } # sub read_base

@@ -260,15 +260,10 @@ return <<HEAD;
    <field title="Variant" flags="7" category="General" format="4" description="New Field 8" type="1" name="variant"/>
    <field title="Flavor Text" flags="0" category="Flavor Text" format="4" description="New Field 1" type="2" name="flavor-text"/>
    <field title="Picture" flags="0" category="Picture" format="4" description="New Field 1" type="10" name="picture"/>
-   <field title="AltTitle" flags="0" category="Second face" format="1" description="New Field 1" type="1" name="alttitle"/>
    <field title="AltMana Cost" flags="0" category="Second face" format="4" description="New Field 1" type="1" name="altmana-cost"/>
-   <field title="AltTypes" flags="7" category="Second face" format="4" description="New Field 2" type="1" name="alttypes"/>
-   <field title="AltSubtypes" flags="7" category="Second face" format="4" description="New Field 3" type="1" name="altsubtypes"/>
    <field title="AltPower" flags="2" category="Second face" format="4" description="New Field 4" type="1" name="altpower"/>
    <field title="AltTough" flags="2" category="Second face" format="4" description="New Field 5" type="1" name="alttough"/>
    <field title="AltIllustrator" flags="7" category="Second face" format="4" description="New Field 6" type="1" name="altillustrator"/>
-   <field title="AltCard Text" flags="0" category="AltCard Text" format="4" description="New Field 8" type="2" name="altcard-text"/>
-   <field title="AltFlavor Text" flags="0" category="AltFlavor Text" format="4" description="New Field 7" type="2" name="altflavor-text"/>
    <field title="AltPicture" flags="0" category="AltPicture" format="4" description="New Field 9" type="10" name="altpicture"/>
 </fields>
 HEAD
