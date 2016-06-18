@@ -127,6 +127,9 @@ HEAD
   icecream => "Energy Conduit",
   supermanorg => "Team Superman",
   batmanorg => "Batman Family",
+  thunderbolts => "Thunderbolts",
+  newwarriors => "New Warriors",
+  turtle => "Teenage Mutant Ninja Turtles",
 );
 
 %exp = (
@@ -140,6 +143,8 @@ HEAD
   ASM => 'The Amazing Spider-Man',
   FUS => 'Faer&#251;n Under Siege',
   WF => "World's Finest",
+  CW => "Civil War",
+  TMNT => "Teenage Mutant Ninja Turtles",
 );
 
 1;
