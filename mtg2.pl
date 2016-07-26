@@ -54,6 +54,11 @@ elsif ($opts{'n'} || $opts{'a'} ) {
     $i++;
   }
   print '<images>';
+
+  #pozbycie sie duplikatow
+  %hash   = map { $_, 1 } @images;
+  @images = keys %hash;
+
   while ($n = shift @images)
   {
     print mtg::image $n;
