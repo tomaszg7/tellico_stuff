@@ -5,6 +5,8 @@ use MIME::Base64 qw(encode_base64);
 use File::Copy;
 use Storable;
 
+use mtg_pseudo;
+
 $cache_dir = $ENV{"HOME"}."/.cache/mtg_perl";
 
 sub __kolory {
@@ -313,9 +315,15 @@ sub search {
     open my $wyniki, $where;
 
     while (<$wyniki>) {
-	push @lista ,  /multiverseid=(\d+)[\'\"]/g;
+    push @lista ,  /multiverseid=(\d+)[\'\"]/g;
     }
     close $wyniki;
+
+    #remove pseudo-cards from the lists
+    for my $key ( keys %mtg_pseudo::pseudo ) {
+      delete $lista{$key};
+    }
+
     return @lista;
 }
 
@@ -401,6 +409,12 @@ sub build_checklist {
       unless (keys( %lista) == 0) { store \%lista, "$cache_dir/sets/$set"; }
     }
   }
+
+  #remove pseudo-cards from the lists
+  for my $key ( keys %mtg_pseudo::pseudo ) {
+    delete $lista{$key};
+  }
+
   return %lista;
 } #sub build_checklist
 
