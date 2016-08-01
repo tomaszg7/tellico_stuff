@@ -32,20 +32,14 @@ elsif ($opts{'n'} || $opts{'a'} ) {
     $sstr = "artist=+[".$sstr."]";
   }
   
-  @lista = mtg::search($sstr);
-  
-  #pozbycie sie duplikatow
-  my %hash   = map { $_, 1 } @lista;
-  @lista = keys %hash;
-  
-  #wybranie 10 pierwszych wynikow
-  @l_tmp1=@lista[0..9];
-  
+  %wyniki = mtg::search($sstr);
+  @lista = keys %wyniki;
+
   $i=0;
   my @images;
   
   print mtg::header;
-  while ($n = shift @l_tmp1)
+  while (($n = shift @lista) && (i < 10))
   {
     $entry = mtg::get_entry $n;
     print mtg::print_entry ($entry, $i);

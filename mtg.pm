@@ -319,12 +319,15 @@ sub search {
     }
     close $wyniki;
 
+    #zmiana na hash, pozbycie sie duplikatow
+    my %hash = map { $_, 1 } @lista;
+
     #remove pseudo-cards from the lists
     for my $key ( keys %mtg_pseudo::pseudo ) {
-      delete $lista{$key};
+      delete $hash{$key};
     }
 
-    return @lista;
+    return %hash;
 }
 
 sub __parse_wyniki {
