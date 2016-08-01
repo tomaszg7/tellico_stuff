@@ -4,40 +4,6 @@ use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 
 use mtg;
 
-sub read_base {
-
-  my %lst;
-
-  my $baza = Archive::Zip->new();
-  unless ( $baza->read( '../../mtg.tc' ) == AZ_OK ) {
-       die 'read error';
-  }
-  foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
-      $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
-      $lst{ $1 } = "1";
-  }
-
-  $baza = Archive::Zip->new();
-  unless ( $baza->read( '../mtg-liga3.tc' ) == AZ_OK ) {
-       die 'read error';
-  }
-  foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
-      $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
-      $lst{ $1 } = "1";
-  }
-
-  $baza = Archive::Zip->new();
-  unless ( $baza->read( '../mtg-agn.tc' ) == AZ_OK ) {
-       die 'read error';
-  }
-  foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
-      $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
-      $lst{ $1 } = "1";
-  }
-  
-  return %lst;
-} # sub read_base
-
 getopts('N:n:quCURMLhsl', \%opts);
 
 unless (($opts{'l'}) || ($opts{'n'}) || ($opts{'N'})) { die "-n: search by expansion, -N: seach by expansion list, -q: print only summary, -u: print id, -s: skip summary, -l: print out aliases.\n";}
@@ -49,7 +15,7 @@ if ($opts{'l'}) {
     die;
 }
 
-%karty = read_base;
+%karty = mtg::read_base;
 
 my @exps = split /[ ,]/, $opts{'N'};
 if ($opts{'n'}) { push @exps, $opts{'n'} }
