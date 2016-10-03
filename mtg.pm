@@ -12,6 +12,12 @@ $cache_dir = $ENV{"HOME"}."/.cache/mtg_perl";
 sub __kolory {
  my $tekst = $_[0];
 	$tekst =~ s/\sor\s/\//g;
+	$tekst =~ s/Phyrexian Red/R\/P/g;
+	$tekst =~ s/Phyrexian Blue/U\/P/g;
+	$tekst =~ s/Phyrexian Green/G\/P/g;
+	$tekst =~ s/Phyrexian Black/B\/P/g;
+	$tekst =~ s/Phyrexian White/W\/P/g;
+
 	$tekst =~ s/Red/R/g;
 	$tekst =~ s/Blue/U/g;
 	$tekst =~ s/Green/G/g;
@@ -19,6 +25,7 @@ sub __kolory {
 	$tekst =~ s/White/W/g;
 	$tekst =~ s/Variable Colorless/X/g;
 	$tekst =~ s/Colorless/C/g;
+	$tekst =~ s/Energy/E/g;
     return $tekst;
 }
 
