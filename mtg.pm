@@ -26,6 +26,7 @@ sub __kolory {
 	$tekst =~ s/Variable Colorless/X/g;
 	$tekst =~ s/Colorless/C/g;
 	$tekst =~ s/Energy/E/g;
+	$tekst =~ s/Snow/S/g;
     return $tekst;
 }
 
