@@ -15,7 +15,17 @@ sub entry {
 
 # get rid of & in D&D
 $entry->{Universe} =~ s/\&/&amp;/;
+
+# translate energy types
 $entry->{Energy} =~ s/lightning/bolt/;
+$entry->{Energy} =~ s/bs/bolt\/shield/;
+$entry->{Energy} =~ s/bf/bolt\/fist/;
+$entry->{Energy} =~ s/bm/bolt\/mask/;
+$entry->{Energy} =~ s/ms/mask\/shield/;
+$entry->{Energy} =~ s/fs/fist\/shield/;
+$entry->{Energy} =~ s/fm/fist\/mask/;
+$entry->{Energy} =~ s/^a$/bolt\/fist\/mask\/shield/;
+
 
 return <<ENTRY;
 <entry id="$i">
@@ -51,7 +61,7 @@ return <<HEAD;
    <field title="Card Subtitle" flags="0" category="General" format="1" description="Title" type="1" name="title"/>
    <field title="Collector Number" flags="0" category="General" format="4" description="New Field 2" type="6" name="collector-number"/>
    <field title="Cost" flags="0" category="General" format="4" description="New Field 3" type="6" name="cost"/>
-   <field title="Type" flags="2" category="General" format="4" description="New Field 4" type="3" allowed="bolt;fist;mask;shield" name="type"/>
+   <field title="Type" flags="2" category="General" format="4" description="New Field 4" type="1" name="type"/>
    <field title="Affiliation" flags="7" category="General" format="4" description="New Field 5" type="1" name="affiliation"/>
    <field title="Text" flags="0" category="Text" format="4" description="New Field 6" type="2" name="text"/>
    <field title="Rarity" flags="6" category="General" format="4" description="New Field 7" type="1" name="rarity"/>
@@ -130,6 +140,10 @@ HEAD
   thunderbolts => "Thunderbolts",
   newwarriors => "New Warriors",
   turtle => "Teenage Mutant Ninja Turtles",
+  greenarroworg => "Team Arrow",
+  whitelanterncorps => "White Lantern Corps",
+  targetorg => "Suicide Squad",
+  magicorg => "Magic",
 );
 
 %exp = (
@@ -145,6 +159,8 @@ HEAD
   WF => "World's Finest",
   CW => "Civil War",
   TMNT => "Teenage Mutant Ninja Turtles",
+  GATF => "Green Arrow and The Flash",
+  DS => "Doctor Strange",
 );
 
 1;
