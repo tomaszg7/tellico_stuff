@@ -144,6 +144,11 @@ HEAD
   whitelanterncorps => "White Lantern Corps",
   targetorg => "Suicide Squad",
   magicorg => "Magic",
+  mknight => "Marvel Knight",
+  inhumans => "Inhumans",
+  deadpoolorg => "Deadpool",
+  starkorg => "Stark Industries",
+  defendersorg => "The Defenders",
 );
 
 %exp = (
@@ -161,6 +166,10 @@ HEAD
   TMNT => "Teenage Mutant Ninja Turtles",
   GATF => "Green Arrow and The Flash",
   DS => "Doctor Strange",
+  DP => "Deadpool",
+  HHS => "Heroes in a Half Shell",
+  IMWM => "Iron Man and War Machine",
+  TD => "The Defenders",
 );
 
 1;
