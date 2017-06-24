@@ -149,6 +149,7 @@ HEAD
   deadpoolorg => "Deadpool",
   starkorg => "Stark Industries",
   defendersorg => "The Defenders",
+  newgods => "New Gods",
 );
 
 %exp = (
@@ -170,6 +171,9 @@ HEAD
   HHS => "Heroes in a Half Shell",
   IMWM => "Iron Man and War Machine",
   TD => "The Defenders",
+  BM => "Batman",
+  SWW => "Superman and Wonder Woman",
+  ToA => "Tomb of Annihilation",
 );
 
 1;
