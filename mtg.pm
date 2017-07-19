@@ -8,6 +8,7 @@ use Storable;
 use mtg_pseudo;
 
 $cache_dir = $ENV{"HOME"}."/.cache/mtg_perl";
+$cache_ver = undef;
 
 sub __kolory {
  my $tekst = $_[0];
@@ -36,7 +37,10 @@ sub get_entry {
     my %entry;
 
     if ( -f "$cache_dir/cards/$numer" ) {
-      return \%{retrieve("$cache_dir/cards/$numer")};
+      my $entry_cached = retrieve("$cache_dir/cards/$numer");
+      if ( $entry_cached->{cache_ver} == $cache_ver ) {
+        return $entry_cached;
+      }
     }
     
     my $ff = File::Fetch->new(uri => "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=$numer");
@@ -197,6 +201,7 @@ sub get_entry {
    }
 
     unless (-d "$cache_dir/cards" ) { mkdir "$cache_dir/cards"; }
+    $entry{cache_ver} = $cache_ver;
     store \%entry, "$cache_dir/cards/$numer";
     
     return \%entry;
