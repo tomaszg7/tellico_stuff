@@ -33,7 +33,6 @@ sub __kolory {
 
 sub get_entry {
     my $numer = $_[0];
-    my $n =  $_[1];
     my %entry;
 
     if ( -f "$cache_dir/cards/$numer" ) {
