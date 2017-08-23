@@ -4,9 +4,9 @@ use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 
 use mtg;
 
-getopts('N:n:quCURMLhsl', \%opts);
+getopts('N:n:quCURMLhslp', \%opts);
 
-unless (($opts{'l'}) || ($opts{'n'}) || ($opts{'N'})) { die "-n: search by expansion, -N: seach by expansion list, -q: print only summary, -u: print id, -s: skip summary, -l: print out aliases.\n";}
+unless (($opts{'l'}) || ($opts{'n'}) || ($opts{'N'})) { die "-n: search by expansion, -N: seach by expansion list, -q: print only summary, -u: print id, -s: skip summary, -p: include prices, -l: print out aliases.\n";}
 
 if ($opts{'l'}) {
     foreach $i (keys %mtg::expansions) {
@@ -38,7 +38,7 @@ if (($opts{'C'}) | ($opts{'U'}) | ($opts{'R'}) | ($opts{'M'}) | ($opts{'L'})) { 
 
 foreach $i (keys %lista) {
    if ((!exists $karty{ $i }) && ((!$do_grep) || (exists $opts{substr $lista { $i }, -1}  ))) {
-       push @out, ($opts{'u'}) ? "$i $lista{ $i }" : "$lista{ $i }";
+       push @out, (($opts{'u'}) ? "$i ": "").$lista{ $i }.(($opts{'p'}) ? " ".mtg::get_price($lista{ $i }=~/(.*) [CURML]/,$exp): "");
        $j++;
    }
 }

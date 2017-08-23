@@ -468,6 +468,42 @@ sub read_base {
   return %lst;
 } # sub read_base
 
+sub get_price_by_id {
+    my $numer = $_[0];
+
+    my $entry = get_entry $numer;
+    my $sstr = $entry->{exp}."/".$entry->{title};
+    $sstr =~ s/\s+/+/g;
+
+    return search_price($sstr);
+} # sub get_price_by_id
+
+sub get_price {
+    my $title = $_[0];
+    my $exp = $_[1];
+
+    my $sstr = $exp."/".$title;
+    $sstr =~ s/\s+/+/g;
+
+    return search_price($sstr);
+} # sub get_price
+
+sub search_price {
+    my $sstr = $_[0];
+    my $ff = File::Fetch->new(uri => 'http://www.magiccardmarket.eu/Products/Singles/'.$sstr);
+    my $where = $ff->fetch(to => '/tmp') or die $ff->error;
+
+    open my $wyniki, $where;
+    while (<$wyniki>) {
+        if (/Price Trend:<\/td><td class=\"outerRight col_Odd col_1 cell_2_1\">([\d,]+) &#x20AC;/) {
+            $cena = $1;
+        }
+    }
+    close $wyniki;
+
+    return $cena;
+} # sub search_price
+
 %expansions = (
   ATQ => 'Antiquities',
   LEG => 'Legends',
