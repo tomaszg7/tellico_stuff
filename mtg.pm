@@ -579,10 +579,16 @@ sub search_price {
   AER => 'Aether Revolt',
   AKH => 'Amonkhet',
   HOU => 'Hour of Devastation',
+  XLN => 'Ixalan',
+  RIX => 'Rivals of Ixalan',
+  DOM => 'Dominaria',
   CHR => 'Chronicles',
   MMA => 'Modern Masters',
   MM2 => 'Modern Masters 2015 Edition',
   EMA => 'Eternal Masters',
+  MM3 => 'Modern Masters 2017 Edition',
+  IMA => 'Iconic Masters',
+  A25 => 'Masters 25',
   CMD => 'Magic: The Gathering-Commander',
   C13 => 'Commander 2013 Edition',
   C14 => 'Commander 2014',
@@ -592,11 +598,13 @@ sub search_price {
   C17 => 'Commander 2017',
   CNS => 'Magic: The Gathering—Conspiracy',
   CN2 => 'Conspiracy: Take the Crown',
+  E02 => 'Explorers of Ixalan',
   POR => 'Portal',
   PO2 => 'Portal Second Age',
   PTK => 'Portal Three Kingdoms',
   UGL => 'Unglued',
   UNH => 'Unhinged',
+  UST => 'Unstable',
   LEA => 'Limited Edition Alpha',
   Alpha => 'Limited Edition Alpha',
   LEB => 'Limited Edition Beta',
@@ -619,7 +627,8 @@ sub search_price {
   M14 => 'Magic 2014 Core Set',
   M15 => 'Magic 2015 Core Set',
   ORI => 'Magic Origins',
-  W16 => 'Welcome Deck 2016'
+  W16 => 'Welcome Deck 2016',
+  M19 => 'Core 2019'
 );
 
 1;
