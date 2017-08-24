@@ -9,6 +9,7 @@ use mtg_pseudo;
 
 $cache_dir = $ENV{"HOME"}."/.cache/mtg_perl";
 $cache_ver = undef;
+$cache_price_TTL = 14; #in days
 
 sub __kolory {
  my $tekst = $_[0];
@@ -468,27 +469,27 @@ sub read_base {
 } # sub read_base
 
 sub get_price_by_id {
-    my $numer = $_[0];
+	my $numer = $_[0];
+	my $entry = get_entry $numer;
 
-    my $entry = get_entry $numer;
-    my $sstr = $entry->{exp}."/".$entry->{title};
-    $sstr =~ s/\s+/+/g;
-
-    return search_price($sstr);
+	return get_price($entry->{title},$entry->{exp});
 } # sub get_price_by_id
 
 sub get_price {
     my $title = $_[0];
     my $exp = $_[1];
 
-    my $sstr = $exp."/".$title;
-    $sstr =~ s/\s+/+/g;
+	my $exp_prices = {};
+	if ( -f "$cache_dir/prices/$exp" ) {
+		$exp_prices = retrieve("$cache_dir/prices/$exp");
+		if ( $exp_prices->{$title} && (time() - $exp_prices->{$title}->{time} < $cache_price_TTL * 24 * 60 * 60)) {
+			return $exp_prices->{$title}->{price};
+		}
+	}
 
-    return search_price($sstr);
-} # sub get_price
+	my $sstr = $exp."/".$title;
+	$sstr =~ s/\s+/+/g;
 
-sub search_price {
-    my $sstr = $_[0];
     my $ff = File::Fetch->new(uri => 'http://www.magiccardmarket.eu/Products/Singles/'.$sstr);
     my $where = $ff->fetch(to => '/tmp') or die $ff->error;
 
@@ -500,8 +501,12 @@ sub search_price {
     }
     close $wyniki;
 
+	unless (-d "$cache_dir/prices" ) { mkdir "$cache_dir/prices"; }
+	$exp_prices->{$title} = { price => $cena, time => time() };
+	store $exp_prices, "$cache_dir/prices/$exp";
+
     return $cena;
-} # sub search_price
+} # sub get_price
 
 %expansions = (
   ATQ => 'Antiquities',
