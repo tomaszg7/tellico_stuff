@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 use DBI;
-#use strict;
 
 use Getopt::Std;
 use dice;
@@ -23,15 +22,11 @@ $sth->execute($sstr,$sstr);
 print dice::header;
 
 $i=0;
-$img_xml;
 
 while (my $row = $sth->fetchrow_hashref)
   {
     print dice::entry $row, $i;
-#    $img_xml.='<image format="JPEG" id="'.$row[xxx].'.jpg"/>
     $i++;
   }
-#print '<images>';
-#print '</images></collection></tellico>';
 print '</collection></tellico>';
 

@@ -39,7 +39,7 @@ elsif ($opts{'n'} || $opts{'a'} ) {
   my @images;
   
   print mtg::header;
-  while (($n = shift @lista) && (i < 10))
+  while (($n = shift @lista) && ($i < 10))
   {
     $entry = mtg::get_entry $n;
     print mtg::print_entry ($entry, $i);

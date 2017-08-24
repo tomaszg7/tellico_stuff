@@ -10,14 +10,14 @@ unless (($opts{'l'}) || ($opts{'n'}) || ($opts{'N'})) { die "-n: search by expan
 
 if ($opts{'l'}) {
     foreach $i (keys %mtg::expansions) {
-	print $i.": ".%mtg::expansions{ $i }."\n";
+	print $i.": ".$mtg::expansions{ $i }."\n";
     }
     die;
 }
 
 %karty = mtg::read_base;
 
-my @exps = split /[ ,]/, $opts{'N'};
+if ($opts{'N'}) { @exps = split /[ ,]/, $opts{'N'}; }
 if ($opts{'n'}) { push @exps, $opts{'n'} }
 
 foreach $exp (@exps) {
@@ -33,7 +33,7 @@ my @out;
 
 my $do_grep = 0;
 
-if (($opts{'C'}) | ($opts{'U'}) | ($opts{'R'}) | ($opts{'M'}) | ($opts{'L'})) { $do_grep = 1; }
+if (($opts{'C'}) || ($opts{'U'}) || ($opts{'R'}) || ($opts{'M'}) || ($opts{'L'})) { $do_grep = 1; }
 
 
 foreach $i (keys %lista) {

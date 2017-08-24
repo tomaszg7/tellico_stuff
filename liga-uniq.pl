@@ -15,7 +15,7 @@ foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
   $lst{ $1 } = "1";
 }
 
-my $baza = Archive::Zip->new();
+$baza = Archive::Zip->new();
 unless ( $baza->read( '../mtg-liga3.tc' ) == AZ_OK ) {
   die 'read error';
 }

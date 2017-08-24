@@ -1,10 +1,5 @@
 package dice;
 
-#use MIME::Base64 qw(encode_base64);
-#use File::Copy;
-#use Storable;
-
-
 $img_dir = $ENV{"HOME"}."/.cache/mtg_perl/dice_cards";
 
 
@@ -45,11 +40,6 @@ return <<ENTRY;
    <picture>$img_dir/$entry->{CardImage}.jpg</picture>
 </entry>
 ENTRY
-
-#missing fields
-#   <collector-number></collector-number>
-#   <text>$entry{text}</text>
-
 } #sub entry
 
 sub header {

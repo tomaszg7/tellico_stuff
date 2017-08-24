@@ -420,7 +420,7 @@ sub build_checklist {
       close $wyniki;
 
     }
-    if ($type = "set") {
+    if ($type == "set") {
       unless (-d "$cache_dir/sets" ) { mkdir "$cache_dir/sets"; }
       unless (keys( %lista) == 0) { store \%lista, "$cache_dir/sets/$set"; }
     }
@@ -482,7 +482,7 @@ sub get_price {
 	my $exp_prices = {};
 	if ( -f "$cache_dir/prices/$exp" ) {
 		$exp_prices = retrieve("$cache_dir/prices/$exp");
-		if ( $exp_prices->{$title} && (time() - $exp_prices->{$title}->{time} < $cache_price_TTL * 24 * 60 * 60)) {
+		if ( $exp_prices->{$title} && (time() - $exp_prices->{$title}->{"time"} < $cache_price_TTL * 24 * 60 * 60)) {
 			return $exp_prices->{$title}->{price};
 		}
 	}
@@ -502,7 +502,7 @@ sub get_price {
     close $wyniki;
 
 	unless (-d "$cache_dir/prices" ) { mkdir "$cache_dir/prices"; }
-	$exp_prices->{$title} = { price => $cena, time => time() };
+	$exp_prices->{$title} = { price => $cena, "time" => time() };
 	store $exp_prices, "$cache_dir/prices/$exp";
 
     return $cena;
