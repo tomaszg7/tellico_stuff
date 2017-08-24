@@ -38,7 +38,7 @@ if (($opts{'C'}) || ($opts{'U'}) || ($opts{'R'}) || ($opts{'M'}) || ($opts{'L'})
 
 foreach $i (keys %lista) {
    if ((!exists $karty{ $i }) && ((!$do_grep) || (exists $opts{substr $lista { $i }, -1}  ))) {
-       push @out, (($opts{'u'}) ? "$i ": "").$lista{ $i }.(($opts{'p'}) ? " ".mtg::get_price($lista{ $i }=~/(.*) [CURML]/,$exp): "");
+       push @out, (($opts{'u'}) ? "$i ": "").$lista{ $i }.(($opts{'p'}) ? " ".mtg::get_price($i, $lista{ $i }=~/(.*) [CURML]/, $exp): "");
        $j++;
    }
 }

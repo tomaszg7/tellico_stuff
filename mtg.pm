@@ -468,22 +468,22 @@ sub read_base {
   return %lst;
 } # sub read_base
 
-sub get_price_by_id {
-	my $numer = $_[0];
-	my $entry = get_entry $numer;
-
-	return get_price($entry->{title},$entry->{exp});
-} # sub get_price_by_id
-
 sub get_price {
-    my $title = $_[0];
-    my $exp = $_[1];
+	my $numer = $_[0];
+    my $title = $_[1];
+    my $exp = $_[2];
+
+	unless ($title && $exp) {
+		my $entry = get_entry $numer;
+		$title = $entry->{title};
+		$exp = $entry->{exp};
+	}
 
 	my $exp_prices = {};
 	if ( -f "$cache_dir/prices/$exp" ) {
 		$exp_prices = retrieve("$cache_dir/prices/$exp");
-		if ( $exp_prices->{$title} && (time() - $exp_prices->{$title}->{"time"} < $cache_price_TTL * 24 * 60 * 60)) {
-			return $exp_prices->{$title}->{price};
+		if ( $exp_prices->{$numer} && (time() - $exp_prices->{$numer}->{"time"} < $cache_price_TTL * 24 * 60 * 60)) {
+			return $exp_prices->{$numer}->{price};
 		}
 	}
 
@@ -502,7 +502,7 @@ sub get_price {
     close $wyniki;
 
 	unless (-d "$cache_dir/prices" ) { mkdir "$cache_dir/prices"; }
-	$exp_prices->{$title} = { price => $cena, "time" => time() };
+	$exp_prices->{$numer} = { price => $cena, "time" => time(), "title" => $title };
 	store $exp_prices, "$cache_dir/prices/$exp";
 
     return $cena;
