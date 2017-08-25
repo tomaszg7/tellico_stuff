@@ -480,6 +480,21 @@ sub get_price {
 		$exp = $entry->{exp};
 	}
 
+
+	$exp =~ s/ Core Set//;
+	$exp =~ s/Commander 2013 Edition/Commander 2013/;
+	$exp =~ s/Modern Masters 2015 Edition/Modern Masters 2015/;
+	$exp =~ s/Modern Masters 2017 Edition/Modern Masters 2017/;
+	$exp =~ s/Revised Edition/Revised/;
+	$exp =~ s/Unlimited Edition/Unlimited/;
+	$exp =~ s/Limited Edition Beta/Beta/;
+	$exp =~ s/Limited Edition Alpha/Alpha/;
+	$exp =~ s/Classic //;
+	$exp =~ s/ \"Timeshifted\"//;
+
+# 	$title =~ s/\/\//%2F/; # replace // by %2F
+	$title =~ s/Æ/Ae/;
+
 	my $exp_prices = {};
 	if ( -f "$cache_dir/prices/$exp" ) {
 		$exp_prices = retrieve("$cache_dir/prices/$exp");
@@ -491,6 +506,7 @@ sub get_price {
 	my $sstr = $exp."/".$title;
 	$sstr =~ s/\s+/+/g;
 
+SEARCH:
     my $ff = File::Fetch->new(uri => 'http://www.magiccardmarket.eu/Products/Singles/'.$sstr);
     my $where = $ff->fetch(to => '/tmp') or die $ff->error;
 
@@ -503,6 +519,14 @@ sub get_price {
         }
     }
     close $wyniki;
+
+    unless ($cena) { print "Entry not found: $sstr\n"; }
+
+#some cards use / while other use //
+#     if (!$cena && ($title =~ /%2F/)) {
+# 		$title =~ s/%2F/%2F%2F/;
+# 		goto SEARCH;
+#     }
 
 	unless (-d "$cache_dir/prices" ) { mkdir "$cache_dir/prices"; }
 	if ($cena && $numer) {
