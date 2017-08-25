@@ -472,6 +472,7 @@ sub get_price {
 	my $numer = $_[0];
     my $title = $_[1];
     my $exp = $_[2];
+    my $cena;
 
 	unless ($title && $exp) {
 		my $entry = get_entry $numer;
@@ -497,13 +498,14 @@ sub get_price {
     while (<$wyniki>) {
         if (/Price Trend:<\/td><td class=.*?>([\d,]+) &#x20AC;/) {
             $cena = $1;
+            $cena =~ s/,/\./; #convert decimal mark
             last;
         }
     }
     close $wyniki;
 
 	unless (-d "$cache_dir/prices" ) { mkdir "$cache_dir/prices"; }
-	if ($cena) {
+	if ($cena && $numer) {
 		$exp_prices->{$numer} = { price => $cena, "time" => time(), "title" => $title };
 		store $exp_prices, "$cache_dir/prices/$exp";
 	}
