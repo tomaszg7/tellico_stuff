@@ -495,15 +495,18 @@ sub get_price {
 
     open my $wyniki, $where;
     while (<$wyniki>) {
-        if (/Price Trend:<\/td><td class=\"outerRight col_Odd col_1 cell_2_1\">([\d,]+) &#x20AC;/) {
+        if (/Price Trend:<\/td><td class=.*?>([\d,]+) &#x20AC;/) {
             $cena = $1;
+            last;
         }
     }
     close $wyniki;
 
 	unless (-d "$cache_dir/prices" ) { mkdir "$cache_dir/prices"; }
-	$exp_prices->{$numer} = { price => $cena, "time" => time(), "title" => $title };
-	store $exp_prices, "$cache_dir/prices/$exp";
+	if ($cena) {
+		$exp_prices->{$numer} = { price => $cena, "time" => time(), "title" => $title };
+		store $exp_prices, "$cache_dir/prices/$exp";
+	}
 
     return $cena;
 } # sub get_price
