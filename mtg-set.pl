@@ -11,14 +11,14 @@ use mtg;
 # $surl= 'http://gatherer.wizards.com/Pages/Search/Default.aspx?';
 
 sub save_base {
-  $dane = $_[0];
-  
-  my $baza = Archive::Zip->new();
-  $baza->addString( $dane, 'tellico.xml' );
-  unless ( $baza->writeToFileNamed('out.tc') == AZ_OK ) {
-    die 'write error';
-  }
-} # sub save_base
+	$dane = $_[0];
+
+	my $baza = Archive::Zip->new();
+	$baza->addString( $dane, 'tellico.xml' );
+	unless ( $baza->writeToFileNamed('out.tc') == AZ_OK ) {
+		die 'write error';
+	}
+} #sub save_base
 
 
 getopts('c:n:', \%opts);
@@ -26,7 +26,9 @@ getopts('c:n:', \%opts);
 if (!$opts{'n'}) { die "-n - search by expansion, -c - limit to color WUBRG.\n";}
 
 my $exp = $opts{'n'};
-if ($mtg::expansions{ $exp }) {$exp = $mtg::expansions{ $exp }};
+if ($mtg::expansions{ $exp }) {
+	$exp = $mtg::expansions{ $exp };
+}
 
 %lista = mtg::build_checklist $exp, "set";
 
@@ -38,22 +40,22 @@ $out = mtg::header;
 $i=0;
 my @images;
 
-while ($n = shift @list)
-{
-   $entry = mtg::get_entry $n;
-   $out .= mtg::print_entry ($entry, $i);
-   push @images, $entry->{image1};
-   if ($entry->{image2})  {push @images, $entry->{image2};}
-   $i++;
+while ($n = shift @list) {
+	$entry = mtg::get_entry $n;
+	$out .= mtg::print_entry ($entry, $i);
+	push @images, $entry->{image1};
+	if ($entry->{image2}) {
+		push @images, $entry->{image2};
+	}
+	$i++;
 }
 
 $out .= '<images>';
 
 unless (-d "out_files" ) { mkdir "out_files"; }
 
-while ($n = shift @images)
-{
-  $out .= mtg::image_ext $n;
+while ($n = shift @images) {
+	$out .= mtg::image_ext $n;
 }
 
 

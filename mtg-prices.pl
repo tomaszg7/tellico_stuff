@@ -8,7 +8,6 @@ use Data::Dumper;
 %karty = mtg::read_base;
 $i = 0;
 $total = 0;
-# my $pricelist = {};
 
 foreach $id (keys %karty) {
 	$entry = mtg::get_entry($id);
@@ -30,7 +29,6 @@ foreach $id (keys %karty) {
 # print Dumper($pricelist);
 
 foreach $id (sort { $pricelist->{$b}->{price} <=> $pricelist->{$a}->{price} } keys %$pricelist) {
-# foreach $id (keys %$pricelist) {
     print $id.": ".$pricelist->{$id}->{title}." (".$pricelist->{$id}->{exp}."): ".$pricelist->{$id}->{price}."\n";
 }
 
