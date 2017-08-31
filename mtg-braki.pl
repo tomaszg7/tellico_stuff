@@ -31,7 +31,8 @@ foreach $exp (@exps) {
 
 	if (keys( %lista) == 0) { die "Wrong expansion name.\n"; }
 
-	$j=0;
+	$j = 0;
+	$total = 0;
 	my @out;
 	my $do_grep = 0;
 
@@ -43,6 +44,9 @@ foreach $exp (@exps) {
 	foreach $i (keys %lista) {
 		if ((!exists $karty{ $i }) && ((!$do_grep) || (exists $opts{substr $lista { $i }, -1}  ))) {
 			push @out, (($opts{'u'}) ? "$i ": "").$lista{ $i }.(($opts{'p'}) ? " ".mtg::get_price($i, $lista{ $i }=~/(.*) [CURML]/, $exp): "");
+			if ($opts{'p'}) {
+				$total += mtg::get_price($i, $lista{ $i }=~/(.*) [CURML]/, $exp);
+			}
 			$j++;
 		}
 	}
@@ -60,7 +64,7 @@ foreach $exp (@exps) {
 			}
 		}
 		else {
-			print ", ".keys( %lista)." cards total, ".int((1-$j/keys(%lista))*100)."\% complete";
+			print ", ".keys( %lista)." cards total, ".int((1-$j/keys(%lista))*100)."\% complete".(($opts{'p'}) ? ", value: ".sprintf("%.2f",$total):"");
 		}
 		print ".\n";
 	}
