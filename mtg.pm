@@ -500,7 +500,7 @@ sub get_price {
 	$exp =~ s/ \"Timeshifted\"//;
 
 # 	$title =~ s/\/\//%2F/; # replace // by %2F
-	$title =~ s/Æ/Ae/;
+# 	$title =~ s/Æ/Ae/;
 
 	my $exp_prices = {};
 	if ( -f "$cache_dir/prices/$exp" ) {
@@ -527,13 +527,19 @@ SEARCH:
 	}
 	close $wyniki;
 
-	unless ($cena) { print "Entry not found: $sstr\n"; }
+#some cards use Æ while other use Ae
+		if (!$cena && ($title =~ /Æ/)) {
+			$title =~ s/Æ/Ae/;
+			goto SEARCH;
+		}
 
 #some cards use / while other use //
 #     if (!$cena && ($title =~ /%2F/)) {
 # 		$title =~ s/%2F/%2F%2F/;
 # 		goto SEARCH;
 #     }
+
+	unless ($cena) { print STDERR "Entry not found: $sstr\n"; }
 
 	unless (-d "$cache_dir/prices" ) { mkdir "$cache_dir/prices"; }
 	if ($cena && $numer) {
