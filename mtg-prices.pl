@@ -7,6 +7,7 @@ use Data::Dumper;
 
 %karty = mtg::read_base;
 $i = 0;
+$total = 0;
 # my $pricelist = {};
 
 foreach $id (keys %karty) {
@@ -20,6 +21,7 @@ foreach $id (keys %karty) {
 	$pricelist->{$id}->{title} = $entry->{title};
 	$pricelist->{$id}->{title} =~ s/%2F/\//g; 
 	$pricelist->{$id}->{exp} = $entry->{exp};
+	$total += $pricelist->{$id}->{price} * $karty{$id};
 	$i++;
 # 	print $i." $entry->{title} ".$pricelist->{$id}->{price}."\n";
 # 	last if $i>=100;
@@ -31,3 +33,5 @@ foreach $id (sort { $pricelist->{$b}->{price} <=> $pricelist->{$a}->{price} } ke
 # foreach $id (keys %$pricelist) {
     print $id.": ".$pricelist->{$id}->{title}." (".$pricelist->{$id}->{exp}."): ".$pricelist->{$id}->{price}."\n";
 }
+
+print "Total: $total\n";

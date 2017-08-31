@@ -444,7 +444,7 @@ sub read_base {
   }
   foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
       $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
-      $lst{ $1 } = "1";
+      $lst{ $1 } ++;
   }
 
   $baza = Archive::Zip->new();
@@ -453,7 +453,7 @@ sub read_base {
   }
   foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
       $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
-      $lst{ $1 } = "1";
+      $lst{ $1 } ++;
   }
 
   $baza = Archive::Zip->new();
@@ -462,7 +462,7 @@ sub read_base {
   }
   foreach (split(/\n/,$baza->contents( "tellico.xml" ))) {
       $_ =~ /<multiverseid>(\d+)<\/multiverseid>/g || next;
-      $lst{ $1 } = "1";
+      $lst{ $1 } ++;
   }
 
   return %lst;
@@ -508,7 +508,7 @@ sub get_price {
 
 SEARCH:
     my $ff = File::Fetch->new(uri => 'http://www.magiccardmarket.eu/Products/Singles/'.$sstr);
-    my $where = $ff->fetch(to => '/tmp') or die $ff->error;
+    my $where = $ff->fetch(to => '/tmp'); #or return;
 
     open my $wyniki, $where;
     while (<$wyniki>) {
