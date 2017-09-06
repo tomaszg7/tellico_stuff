@@ -32,4 +32,4 @@ foreach $id (sort { $pricelist->{$b}->{price} <=> $pricelist->{$a}->{price} } ke
     print $id.": ".$pricelist->{$id}->{title}." (".$pricelist->{$id}->{exp}."): ".$pricelist->{$id}->{price}."\n";
 }
 
-print "Total: $total\n";
+print "Total: ".sprintf("%.2f",$total)."\n";
