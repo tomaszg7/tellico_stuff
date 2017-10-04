@@ -170,7 +170,7 @@ sub get_entry {
 
 		if ($entry{types.$i} =~ /(.*)\s*\x{e2}\x{80}\x{94}\s*(.*)/) {
 			my $t = $1; my $st= $2;
-			if ($t =~ /Basic (.*) Land/) { #takes care of snow lands
+			if ($t =~ /Basic ?(.*?) Land/) { #takes care of snow lands
 				$entry{xmltypes.$i}="<types>Basic Land<\/types><types>$1<\/types>";
 			}
 			else {
