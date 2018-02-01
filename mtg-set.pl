@@ -26,8 +26,8 @@ getopts('c:n:', \%opts);
 if (!$opts{'n'}) { die "-n - search by expansion, -c - limit to color WUBRG.\n";}
 
 my $exp = $opts{'n'};
-if ($mtg::expansions{ $exp }) {
-	$exp = $mtg::expansions{ $exp };
+if ($mtg_ext::expansions{ $exp }) {
+	$exp = $mtg_ext::expansions{ $exp };
 }
 
 %lista = mtg::build_checklist $exp, "set";

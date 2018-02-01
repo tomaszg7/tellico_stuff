@@ -11,8 +11,8 @@ unless (($opts{'l'}) || ($opts{'n'}) || ($opts{'N'})) {
 }
 
 if ($opts{'l'}) {
-	foreach $i (keys %mtg::expansions) {
-	print $i.": ".$mtg::expansions{ $i }."\n";
+	foreach $i (keys %mtg_ext::expansions) {
+	print $i.": ".$mtg_ext::expansions{ $i }."\n";
 	}
 	die;
 }
@@ -23,8 +23,8 @@ if ($opts{'N'}) { @exps = split /[ ,]/, $opts{'N'}; }
 if ($opts{'n'}) { push @exps, $opts{'n'} }
 
 foreach $exp (@exps) {
-	if ($mtg::expansions{ $exp }) {
-		$exp = $mtg::expansions{ $exp };
+	if ($mtg_ext::expansions{ $exp }) {
+		$exp = $mtg_ext::expansions{ $exp };
 	}
 
 	%lista = mtg::build_checklist $exp, "set";
