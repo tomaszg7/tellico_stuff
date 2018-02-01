@@ -675,7 +675,7 @@ SEARCH:
 	M15 => 'Magic 2015 Core Set',
 	ORI => 'Magic Origins',
 	W16 => 'Welcome Deck 2016',
-	M19 => 'Core 2019'
+	M19 => 'Core Set 2019'
 );
 
 1;
