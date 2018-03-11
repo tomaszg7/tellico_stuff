@@ -1,5 +1,11 @@
 # package mtg_ext;
 
+sub list_exp {
+	foreach $i (sort keys %expansions) {
+		print $i.": ".$expansions{ $i }."\n";
+	}
+}
+
 %expansions = (
 	ATQ => 'Antiquities',
 	LEG => 'Legends',

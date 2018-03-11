@@ -11,10 +11,8 @@ unless (($opts{'l'}) || ($opts{'n'}) || ($opts{'N'})) {
 }
 
 if ($opts{'l'}) {
-	foreach $i (keys %mtg_ext::expansions) {
-	print $i.": ".$mtg_ext::expansions{ $i }."\n";
-	}
-	die;
+	mtg::list_exp;
+	exit;
 }
 
 %karty = mtg::read_base;
