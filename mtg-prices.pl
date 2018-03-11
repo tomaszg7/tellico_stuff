@@ -16,7 +16,7 @@ if ($opts{'l'}) {
 }
 
 %karty = mtg::read_base;
-$i = 0;
+# $i = 0;
 $total = 0;
 
 if ($opts{'N'}) { 
@@ -48,7 +48,7 @@ foreach $id (keys %karty) {
 	$pricelist->{$id}->{title} =~ s/%2F/\//g; 
 	$pricelist->{$id}->{exp} = $entry->{exp};
 	$total += $pricelist->{$id}->{price} * $karty{$id};
-	$i++;
+# 	$i++;
 # 	print $i." $entry->{title} ".$pricelist->{$id}->{price}."\n";
 # 	last if $i>=100;
 }
