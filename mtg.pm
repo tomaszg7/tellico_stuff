@@ -345,7 +345,7 @@ sub search {
 	my %hash = map { $_, 1 } @lista;
 
 	#remove pseudo-cards from the lists
-	for my $key ( keys %mtg_pseudo::pseudo ) {
+	for my $key ( keys %pseudo ) {
 		delete $hash{$key};
 	}
 
@@ -435,7 +435,7 @@ sub build_checklist {
 	}
 
 	#remove pseudo-cards from the lists
-	for my $key ( keys %mtg_pseudo::pseudo ) {
+	for my $key ( keys %pseudo ) {
 		delete $lista{$key};
 	}
 

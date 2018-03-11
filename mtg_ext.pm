@@ -1,4 +1,4 @@
-package mtg_ext;
+# package mtg_ext;
 
 %expansions = (
 	ATQ => 'Antiquities',
