@@ -4,7 +4,7 @@ use Getopt::Std;
 
 use mtg;
 
-getopts('N:n:h', \%opts);
+getopts('N:n:hCURM', \%opts);
 
 if ($opts{'h'}) {
 	die "-n: search by expansion, -N: seach by expansion list\n";
@@ -28,6 +28,10 @@ if ($opts{'n'}) {
 	$exps{$opts{'n'}} = 1;
 }
 
+if (($opts{'C'}) || ($opts{'U'}) || ($opts{'R'}) || ($opts{'M'}) ) {
+	$rarity_check = 1;
+}
+
 foreach $exp (keys %exps) {
 	if ($mtg::expansions{ $exp }) {
 		delete $exps{$exp};
@@ -38,8 +42,13 @@ foreach $exp (keys %exps) {
 foreach $id (keys %karty) {
 	$entry = mtg::get_entry($id);
 
-	if (($entry->{rare} eq 'Basic Land') or (%exps and (! exists $exps{$entry->{exp}} ) ) ) { 
-#		print "skipping $entry->{title}\n";
+#grab first letter of rarity
+	if ($entry->{rare} =~ /^([CURMB])/) {
+		$rarity = $1;
+	}
+
+	if (($rarity eq "B") or (%exps and (! exists $exps{$entry->{exp}} ) ) or ($rarity_check and (! exists $opts{$rarity}) )) { 
+# 		print "skipping $entry->{title}\n";
 		next;
 	}
 
