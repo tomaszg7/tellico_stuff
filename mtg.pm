@@ -12,6 +12,30 @@ $cache_dir = $ENV{"HOME"}."/.cache/mtg_perl";
 $cache_ver = undef;
 $cache_price_TTL = 14; #in days
 
+# entry structure:
+# $entry->{number}				multiverseid
+# $entry->{title}						title
+# $entry->{mana1}					mana cost for each side
+# $entry->{mana2}
+# $entry->{xmltypes1}			types for each side
+# $entry->{xmltypes2}
+# $entry->{xmlsubtypes1}		subtypes for each side
+# $entry->{xmlsubtypes2}
+# $entry->{p1}						power for each side
+# $entry->{p2}
+# $entry->{t1}						toughtness for each side
+# $entry->{t2}
+# $entry->{cnum}					card collector number
+# $entry->{exp}						expansion
+# $entry->{rare}						rarity
+# $entry->{art1}						illustrator for each side
+# $entry->{art2}
+# $entry->{ftext}					flavor-text
+# $entry->{ctext}					card-text
+# $entry->{color}					color
+# $entry->{image1}				basename of .jpeg file with image for each side
+# $entry->{image2}
+
 sub __kolory {
 my $tekst = $_[0];
 	$tekst =~ s/\sor\s/\//g;
