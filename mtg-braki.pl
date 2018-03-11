@@ -21,8 +21,8 @@ if ($opts{'N'}) { @exps = split /[ ,]/, $opts{'N'}; }
 if ($opts{'n'}) { push @exps, $opts{'n'} }
 
 foreach $exp (@exps) {
-	if ($mtg_ext::expansions{ $exp }) {
-		$exp = $mtg_ext::expansions{ $exp };
+	if ($mtg::expansions{ $exp }) {
+		$exp = $mtg::expansions{ $exp };
 	}
 
 	%lista = mtg::build_checklist $exp, "set";
