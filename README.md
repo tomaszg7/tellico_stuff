@@ -1,7 +1,7 @@
-Magic: The Gathering and Dice Masters
-collection data source scripts for Tellico
-https://github.com/tomaszg7/tellico_stuff
---------------------------------------------------
+Magic: The Gathering and Dice Masters collection data source scripts for Tellico
+========================================================================
+<https://github.com/tomaszg7/tellico_stuff>
+
 
 The Magic the Gathering script grabs information from 
 http://gatherer.wizards.com. It is rather ugly regexp job since the Gatherer 
@@ -16,31 +16,31 @@ locate it on-line and add to collection using its Gatherer id (multiverse id).
 You can also make decks using Tellico's loan feature.
 
 Sample screenshot of a demo collection: 
-http://tomaszg.pl/tellico-mtg/screenshot.jpg
+<http://tomaszg.pl/tellico-mtg/screenshot.jpg>
 
 Requirements:
 -------------
 1. Perl
-2. Getopt::Std, File::Fetch, MIME::Base64, File::Copy, Storable Perl modules
-3. (optional) Archive::Zip for some helper scripts
+2. Perl modules: `Getopt::Std`, `File::Fetch`, `MIME::Base64`, `File::Copy`, `Storable` 
+3. (optional) `Archive::Zip` for some helper scripts
 
 Installation:
 -------------
-Put the file mtg2.pl in Tellico datasource directory (or anywhere else) and 
-mtg.pm where Perl can find it. You can check @INC paths via:
+Put the file `mtg2.pl` in Tellico datasource directory (or anywhere else) and 
+`mtg*.pm` files where Perl can find them. You can check `@INC` paths via:
 
-perl -e "print @INC"
+```perl -e "print @INC"```
 
 You need to add a new datasource for "Custom Collection" configuring Tellico 
-(see screenshot: http://tomaszg.pl/tellico-mtg/config.jpg):
+(see screenshot: <http://tomaszg.pl/tellico-mtg/config.jpg>):
 
 1. Collection type: Custom
 2. Result type: Tellico
 3. Check:
-	"Title": -n %1
-	"Person": -a %1
-	"arXiv id": -N %1
-	"Update": -N %{multiverseid}
+	* "Title": -n %1
+	* "Person": -a %1
+	* "arXiv id": -N %1
+	* "Update": -N %{multiverseid}
 
 I don't think it's possible to make arbitrary labels for search fields, so 
 "title" means card's name, "person" means artist and "arxiv id" denotes 
@@ -50,19 +50,18 @@ Create empty collection of "custom" type and just use datasource to look for
 the cards. It prints out only 10 first results, so you might need to search 
 some by multiverse id.
 
-The scripts caches search results and images in ~/.cache/mtg-perl
+The scripts caches search results and images in `~/.cache/mtg-perl`.
 
 Helper scripts:
 ---------------
-mtg-braki.pl - reads Tellico database files and prints out missing cards for a 
-		given expansion(s) and/or some stats
-mtg-check-pseudo.pl - reads Tellico database and checks if there are some 
-		"pseudocards" listed there. At the moment it only looks for melded 
-cards 
-		and reverse sides (listed by hand in mtg_pseudo.pm)
-mtg-set.pl - generates a Tellico database containing whole expansion
+* `mtg-braki.pl` - reads Tellico database files listed in `mtg_bases.pm` and prints out missing cards for a 
+		given expansion(s) and/or some stats, including prices
+* `mtg-check-pseudo.pl` - reads Tellico databases and checks if there are some 
+		"pseudocards" listed there. At the moment it only looks for cards  listed by hand in `mtg_pseudo.pm`
+* `mtg-set.pl` - generates a Tellico database containing whole expansion
+* `mtg-prices.pl` - calculates value of collection according to "trend price" from <http://www.cardmarket.com>
 
-Scripts have hardcoded locations of input/output files, so they might need 
+Some scripts have hardcoded locations of input/output files, so they might need 
 hand-tuning.
 
 Dice Masters:
