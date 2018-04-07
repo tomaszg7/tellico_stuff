@@ -345,7 +345,7 @@ sub image_ext {
 			my $where = $ff->fetch( to => '/tmp' ) or die $ff->error;;
 			move $where, "$cache_dir/images/$numer.jpeg";
 		}
-		move "$cache_dir/images/$numer.jpeg", "out_files/";
+		copy "$cache_dir/images/$numer.jpeg", "out_files/";
 	}
 	return '<image format="JPEG" id="'.$numer.'.jpeg"/>';
 } #sub image_ext
