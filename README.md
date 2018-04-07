@@ -59,6 +59,7 @@ Helper scripts:
 * `mtg-check-pseudo.pl` - reads Tellico databases and checks if there are some 
 		"pseudocards" listed there. At the moment it only looks for cards  listed by hand in `mtg_pseudo.pm`
 * `mtg-set.pl` - generates a Tellico database containing whole expansion
+* `mtg-parse-decklist.pl` - generates a Tellico database based on a decklist file (each line containing number and card_name, numbers are ignored at the moment)
 * `mtg-prices.pl` - calculates value of collection according to "trend price" from <http://www.cardmarket.com>
 
 Some scripts have hardcoded locations of input/output files, so they might need 
