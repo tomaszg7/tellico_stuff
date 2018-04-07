@@ -37,10 +37,10 @@ You need to add a new datasource for "Custom Collection" configuring Tellico
 1. Collection type: Custom
 2. Result type: Tellico
 3. Check:
-	* "Title": -n %1
-	* "Person": -a %1
-	* "arXiv id": -N %1
-	* "Update": -N %{multiverseid}
+	* "Title": `-n %1`
+	* "Person": `-a %1`
+	* "arXiv id": `-N %1`
+	* "Update": `-N %{multiverseid}`
 
 I don't think it's possible to make arbitrary labels for search fields, so 
 "title" means card's name, "person" means artist and "arxiv id" denotes 
