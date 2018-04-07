@@ -353,6 +353,8 @@ sub image_ext {
 
 sub search {
 	$sstr = $_[0];
+	$uniq = $_[1];
+
 	my @lista;
 
 	my $ff = File::Fetch->new(uri => 'http://gatherer.wizards.com/Pages/Search/Default.aspx?'.$sstr);
@@ -361,7 +363,12 @@ sub search {
 	open my $wyniki, $where;
 
 	while (<$wyniki>) {
-		push @lista ,  /multiverseid=(\d+)[\'\"]/g;
+		if ($uniq) {
+			push @lista ,  /Image.ashx\?multiverseid=(\d+)\&amp/g;
+		}
+		else {
+			push @lista ,  /multiverseid=(\d+)[\'\"]/g;
+		}
 	}
 	close $wyniki;
 
