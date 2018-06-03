@@ -523,7 +523,7 @@ sub get_price {
 	if ( -f "$cache_dir/prices/$exp" ) {
 		$exp_prices = retrieve("$cache_dir/prices/$exp");
 		if ( $exp_prices->{$numer} && (time() - $exp_prices->{$numer}->{"time"} < $cache_price_TTL * 24 * 60 * 60)) {
-			return $exp_prices->{$numer}->{price};
+			return '$'.$exp_prices->{$numer}->{price};
 		}
 	}
 
@@ -564,7 +564,7 @@ SEARCH:
 		store $exp_prices, "$cache_dir/prices/$exp";
 	}
 
-	return $cena;
+	return '$'.$cena;
 } #sub get_price
 
 1;
