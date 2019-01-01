@@ -531,12 +531,13 @@ sub get_price {
 	$sstr =~ s/\s+/+/g;
 
 SEARCH:
-	my $ff = File::Fetch->new(uri => 'http://www.magiccardmarket.eu/Products/Singles/'.$sstr);
-	my $where = $ff->fetch(to => '/tmp'); #or return;
+# 	print ' * Fetching https://www.cardmarket.com/en/Magic/Products/Singles/'.$sstr."\n";
+	my $ff = File::Fetch->new(uri => 'http://www.cardmarket.com/en/Magic/Products/Singles/'.$sstr);
+	my $where = $ff->fetch(to => '/tmp') or die $ff->error();
 
 	open my $wyniki, $where;
 	while (<$wyniki>) {
-		if (/Price Trend:<\/td><td class=.*?>([\d,]+) &#x20AC;/) {
+		if (/Price Trend<\/dt><dd class=.*?><span>([\d,]+) &#x20AC;/) {
 			$cena = $1;
 			$cena =~ s/,/\./; #convert decimal mark
 			last;
