@@ -516,9 +516,14 @@ sub get_price {
 	$exp =~ s/Limited Edition Alpha/Alpha/;
 	$exp =~ s/Classic //;
 	$exp =~ s/ \"Timeshifted\"//;
+	$exp =~ s/Planechase 2012 Edition/Planechase-2012/;
+	$exp =~ s/Duel Decks Anthology, Jace vs. Chandra/Duel-Decks-Jace-vs-Chandra/;
 
-# 	$title =~ s/\/\//%2F/; # replace // by %2F
-# 	$title =~ s/Æ/Ae/;
+	$title =~ s/\///g;
+	$title =~ s/[:,-]//g;
+	$title =~ s/'/-/g;
+	$exp =~ s/'//g;
+	# 	$title =~ s/Æ/Ae/;
 
 	my $exp_prices = {};
 	if ( -f "$cache_dir/prices/$exp" ) {
