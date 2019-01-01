@@ -4,10 +4,10 @@ use Getopt::Std;
 
 use mtg;
 
-getopts('N:n:hCURM', \%opts);
+getopts('N:n:u:hCURM', \%opts);
 
 if ($opts{'h'}) {
-	die "-n: search by expansion, -N: seach by expansion list\n";
+	die "-n: search by expansion, -N: seach by expansion list, -u search by id, -l list expansion abbreviations, -C, -U, -R, -M limit the rarity";
 }
 
 if ($opts{'l'}) {
@@ -18,6 +18,11 @@ if ($opts{'l'}) {
 %karty = mtg::read_base;
 # $i = 0;
 $total = 0;
+
+if ($opts{'u'}) {
+	print mtg::get_price($opts{'u'})."\n";
+	exit;
+}
 
 if ($opts{'N'}) { 
 	my @tmp = split /[ ,]/, $opts{'N'}; 
