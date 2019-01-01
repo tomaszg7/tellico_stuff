@@ -529,12 +529,12 @@ sub get_price {
 	}
 
 	my $sstr = $exp."/".$title;
-	$sstr =~ s/\s+/+/g;
+	$sstr =~ s/\s+/-/g;
 
 SEARCH:
 # 	print ' * Fetching https://www.cardmarket.com/en/Magic/Products/Singles/'.$sstr."\n";
 	my $ff = File::Fetch->new(uri => 'http://www.cardmarket.com/en/Magic/Products/Singles/'.$sstr);
-	my $where = $ff->fetch(to => '/tmp') or die $ff->error();
+	my $where = $ff->fetch(to => '/tmp') or print $ff->error()."\n";
 
 	open my $wyniki, $where;
 	while (<$wyniki>) {
@@ -545,6 +545,7 @@ SEARCH:
 		}
 	}
 	close $wyniki;
+	unlink $where or warn "Could not delete $where: $!";
 
 #some cards use Æ while other use Ae
 		if (!$cena && ($title =~ /Æ/)) {
