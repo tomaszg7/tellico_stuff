@@ -506,6 +506,7 @@ sub get_price {
 
 
 	$exp =~ s/ Core Set//;
+	$exp =~ s/Core Set 2019/Core-2019/;
 	$exp =~ s/Commander 2013 Edition/Commander 2013/;
 	$exp =~ s/Modern Masters 2015 Edition/Modern Masters 2015/;
 	$exp =~ s/Modern Masters 2017 Edition/Modern Masters 2017/;
