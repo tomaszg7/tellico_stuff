@@ -100,9 +100,8 @@ sub list_exp {
 	C14 => 'Commander 2014',
 	C15 => 'Commander 2015',
 	C16 => 'Commander 2016',
-	CMA => 'Commander Anthology',
 	C17 => 'Commander 2017',
-	CM1 => 'Commander\'s Arsenal'
+	CM1 => 'Commander\'s Arsenal',
 	CMA => 'Commander Anthology',
 	CM2 => 'Commander Anthology Volume II',
 	C18 => 'Commander 2018',
