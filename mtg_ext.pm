@@ -87,6 +87,7 @@ sub list_exp {
 	DOM => 'Dominaria',
 	GNR => 'Guilds of Ravnica',
 	RNA => 'Ravnica Allegiance',
+	WAR => 'War of the Spark',
 	CHR => 'Chronicles',
 	MMA => 'Modern Masters',
 	MM2 => 'Modern Masters 2015 Edition',
