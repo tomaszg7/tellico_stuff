@@ -96,6 +96,7 @@ sub list_exp {
 	IMA => 'Iconic Masters',
 	A25 => 'Masters 25',
 	UMA => 'Ultimate Masters',
+	MH1 => 'Modern Horizons',
 	CMD => 'Magic: The Gathering-Commander',
 	C13 => 'Commander 2013 Edition',
 	C14 => 'Commander 2014',
@@ -139,7 +140,8 @@ sub list_exp {
 	M15 => 'Magic 2015 Core Set',
 	ORI => 'Magic Origins',
 	W16 => 'Welcome Deck 2016',
-	M19 => 'Core Set 2019'
+	M19 => 'Core Set 2019',
+	M20 => 'Core Set 2020'
 );
 
 1;
