@@ -27,7 +27,7 @@ foreach $exp (@exps) {
 
 	%lista = mtg::build_checklist $exp, "set";
 
-	if (keys( %lista) == 0) { die "Wrong expansion name.\n"; }
+	if (keys( %lista) == 0) { die "Wrong expansion name: $exp\n"; }
 
 	$j = 0;
 	$total = 0;
