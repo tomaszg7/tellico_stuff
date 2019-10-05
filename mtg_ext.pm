@@ -88,6 +88,7 @@ sub list_exp {
 	GNR => 'Guilds of Ravnica',
 	RNA => 'Ravnica Allegiance',
 	WAR => 'War of the Spark',
+	ELD => 'Throne of Eldraine',
 	CHR => 'Chronicles',
 	MMA => 'Modern Masters',
 	MM2 => 'Modern Masters 2015 Edition',
@@ -141,7 +142,8 @@ sub list_exp {
 	ORI => 'Magic Origins',
 	W16 => 'Welcome Deck 2016',
 	M19 => 'Core Set 2019',
-	M20 => 'Core Set 2020'
+	M20 => 'Core Set 2020',
+	M21 => 'Core Set 2021'
 );
 
 1;

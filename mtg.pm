@@ -518,6 +518,7 @@ sub get_price {
 	$exp =~ s/ \"Timeshifted\"//;
 	$exp =~ s/Planechase 2012 Edition/Planechase-2012/;
 	$exp =~ s/Duel Decks Anthology, Jace vs. Chandra/Duel-Decks-Jace-vs-Chandra/;
+	$exp =~ s/Conspiracy: Take the Crown/Conspiracy-Take-the-Crown/;
 
 	$title =~ s/\///g;
 	$title =~ s/[:,-]//g;
