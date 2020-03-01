@@ -544,7 +544,7 @@ SEARCH:
 
 	open my $wyniki, $where;
 	while (<$wyniki>) {
-		if (/Price Trend<\/dt><dd class=.*?><span>([\d,]+) &#x20AC;/) {
+		if (/Price Trend<\/dt><dd class=.*?><span>([\d,]+) €/) {
 			$cena = $1;
 			$cena =~ s/,/\./; #convert decimal mark
 			last;
